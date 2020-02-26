@@ -1,4 +1,5 @@
 from PIL import Image
+import tkinter as tk
 
 def mappingImage(img, threshold):
     array = [[False]*img.height]*img.width
@@ -19,22 +20,20 @@ def mappingImage(img, threshold):
             else:
                 print (" ", end = '')
             i+=1
-            
-        
         i=0
         j+=1
         print("")
-    print(i)
-    print(j)
 
 def resizing (img_original, width, height):
     img_final = img_original.resize((width,height))
-    return [Image, img_final];
+    return img_final
     
-threshold = 180
-img = Image.open("/home/pi/Documents/couronne.jpeg")
-print(img.class)
-width = 200
-height = 200
-img = resizing(img, width, height)
-mappingImage(img,threshold)
+def interface ():
+    frame = tk.Frame
+    
+threshold = 40
+img = Image.open("/home/pi/Documents/burger.jpeg")
+width = 90
+height = 160
+resized_img = resizing(img, width, height)
+mappingImage(resized_img,threshold)
