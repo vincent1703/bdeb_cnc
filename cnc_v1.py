@@ -7,18 +7,18 @@ def mappingImage(img, threshold):
     print(img.width)
     i=0
     j=0
-    for x in array:
-        for y in array[i]:
+    for y in array:
+        for x in y:
             r,g,b = img.getpixel((i,j))
             if r < threshold:
-                array[i][j] = True
-                print ("r", end = '')
+                x = True
+                print ("█", end = '')
             elif g < threshold:
-                array[i][j] = True
-                print ("g", end = '')
+                x = True
+                print ("█", end = '')
             elif b < threshold:
-                array[i][j] = True
-                print("b", end = '')
+                x = True
+                print("█", end = '')
             else:
                 print (" ", end = '')
             i+=1
@@ -34,8 +34,8 @@ def interface ():
     frame = tk.Frame
     
 threshold = 40
-img = Image.open("/home/pi/Documents/burger.jpeg")
-width = 160
-height = 90
+img = Image.open("/home/pi/Documents/testImage.jpeg")
+width = 200
+height = 200
 resized_img = resizing(img, width, height)
 mappingImage(resized_img,threshold)
