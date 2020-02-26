@@ -2,7 +2,9 @@ from PIL import Image
 import tkinter as tk
 
 def mappingImage(img, threshold):
-    array = [[False]*img.height]*img.width
+    array = [[False]*img.width]*img.height
+    print(img.height)
+    print(img.width)
     i=0
     j=0
     for x in array:
@@ -33,7 +35,7 @@ def interface ():
     
 threshold = 40
 img = Image.open("/home/pi/Documents/burger.jpeg")
-width = 90
-height = 160
+width = 160
+height = 90
 resized_img = resizing(img, width, height)
 mappingImage(resized_img,threshold)
