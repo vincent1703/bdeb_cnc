@@ -39,7 +39,6 @@ def mapping_image(img, threshold):
 
 def contour_image(img, difference):
         
-    
     liste_contour = [[False for i in range(img.width)] for j in range(img.height)]
     liste_pixels = [[0 for i in range(3)] for j in range(5)]
     
@@ -89,9 +88,9 @@ def interface ():
     frame = tk.Frame
     
 threshold = 60
-difference = 24 
+difference = 34 
 
-img = Image.open("/home/vincent/bdeb_cnc/images/saloon.png")
+img = Image.open("/home/vincent/bdeb_cnc/images/nou.png")
 width = 350
 height = 238
 resized_img = resizing(img, width, height)
