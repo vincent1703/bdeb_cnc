@@ -87,10 +87,18 @@ def resizing (img_original, width, height):
 def interface ():
     frame = tk.Frame
     
+def set_height(h):
+    global height 
+    height = h
+
+def set_width(w):
+    global width 
+    width = w
+
 threshold = 60
 difference = 34 
 
-img = Image.open("/home/vincent/bdeb_cnc/images/nou.png")
+img = Image.open("/home/patate42/bdeb_cnc/images/nou.png")
 width = 350
 height = 238
 resized_img = resizing(img, width, height)
@@ -100,5 +108,9 @@ contour_image(resized_img, difference)
 
 tableau = [[True, True, False, False, False],[True, True, True, False, False],[False, False, False, False, False],[True, True, True, True, True]]
 affichage_booleen(tableau)
+
+print(height)
+set_height(33)
+print(height)
 
 
