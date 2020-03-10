@@ -1,29 +1,38 @@
-import RPi.GPIO as GPIO
-    import donnees
+#import RPi.GPIO as GPIO
+import donnees
+
+def impression_fake():
+    global array
+    array = donnes.image_booleen
+    
+     for i in range(len(array[0])):
+        for j in range(len(array)):
+            #print(i, end = 'i ')
+            #print(j, end = 'j  ')
+            if array[j][i] == True:
+                print("0", end = '')
+            else:
+                print(" ", end = '')
+        print("")
 
 
+def impression():
+    global array
+    array = donnees.image_booleen
+    global espacement
+    espacement = donnees.espacement
 
-def impression(image):
-    if(image = contour) :
-        array = donnees.image_contour_booleen
-        hauteur = donnees.image_contour["hauteur"]
-        largeur = donnees.image_contour["largeur"]
-        
     reset_buse()
 
-    i=0
-    j=0
-
-    for x in array:
-        for y in x:
-            if array[i][j]==True:
+    for i in range(len(array[0])):
+        for j in range(len(array)):
+            #print(i, end = 'i ')
+            #print(j, end = 'j  ')
+            if array[j][i] == True:
                 impression_point()
-            prochain_point()
-            j += 1
-        i += 1
+            prochain_point()                                               
+                    
         prochaine_ligne()
-        j =  0
-
 
 
 # Fait en sorte que le petit servo imprime un point
@@ -40,12 +49,4 @@ def reset_buse():
 
 # Valeur en mm qui détermine la distance que doit parcourir la buse pour passer au point suivant et à la ligne suivante
 espacement = 1
-
 array = 0
-hauteur = 1
-largeur = 1
-
-hauteur_mm = 1
-largeur_mm = 1
-
-

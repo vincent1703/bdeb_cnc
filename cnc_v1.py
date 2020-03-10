@@ -173,7 +173,7 @@ compare = 6
 threshold = 60
 difference = 34 
 
-img = Image.open("/home/pi/bdeb_cnc/images/angela.png")
+img = Image.open("/home/vincent/bdeb_cnc/images/angela.png")
 facteur = 0.7
 resized_img = resizing(img, facteur)
 mapping_image(resized_img,threshold)
