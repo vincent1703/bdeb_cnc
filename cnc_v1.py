@@ -1,8 +1,22 @@
 from PIL import Image
-import tkinter as tk
 import random
+import donnees
 from array import *
 
+def generate_preview(array):
+    preview = Image.new('RGB',(donnees.largeur_nouvelle, donnees.hauteur_nouvelle), (255,255,255))
+    for i in range(preview.width):
+        for j in range(previw.height):
+            if array[i][j] == True:
+                preview.Draw.point((i,j), (0,0,0))
+            else:
+                preview.Draw.point((i,j), (255,255,255))
+            j+=1
+        j=0
+        i+=1
+    return preview
+
+#utile pour debug seulement
 def affichage_booleen (array):
    
 
@@ -23,11 +37,9 @@ def affichage_booleen (array):
 
     
     
-    
-    
-    
-    
-def mapping_image(img, threshold):
+def mapping_image():
+    threshold = donnees.threshold
+    img = donnees.image_final
     array = [[False for i in range(img.width)] for j in range(img.height)]
     print(img.height)
     print(img.width)
@@ -38,28 +50,29 @@ def mapping_image(img, threshold):
             r,g,b = img.getpixel((i,j))
             if r < threshold:
                 x = True
-                print ("█", end = '')
+                #print ("█", end = '')
             elif g < threshold:
                 x = True
-                print ("█", end = '')
+                #print ("█", end = '')
             elif b < threshold:
                 x = True
-                print("█", end = '')
+                #print("█", end = '')
             else:
-                print (" ", end = '')
+                print ("", end = '')
             i+=1
         i=0
         j+=1
-        print("")
+        #print("")
+    return array
+
 
 def contour_image(img, difference):
-        
-    liste_contour = [[False for i in range(img.height)] for j in range(img.width)]
+    array = [[False for i in range(img.height)] for j in range(img.width)]
     liste_pixels = [[0 for i in range(3)] for j in range(5)]
     
     i = 0
     j = 0
-    for x in liste_contour :
+    for x in array :
         for y in x :
             try : 
                 liste_pixels[0] = img.getpixel((i,j))
@@ -68,7 +81,7 @@ def contour_image(img, difference):
                 liste_pixels[3] = img.getpixel((i-1,j))
                 liste_pixels[4] = img.getpixel((i,j-1))
                 
-                liste_contour[i][j] = verification_contour(liste_pixels, difference)
+                array[i][j] = verification_contour(liste_pixels, difference)
             except : 
                 print ("", end = '')
 
@@ -76,7 +89,9 @@ def contour_image(img, difference):
                 j +=1
         j=0
         i+=1
-    affichage_booleen(liste_contour)
+    #affichage_booleen(array)
+    return array
+
 
 def verification_contour (liste_pixels, difference):
     r,g,b = liste_pixels[0]
@@ -90,27 +105,28 @@ def verification_contour (liste_pixels, difference):
     return False    
 
 
+#commentaires de debug inutiles
 def resizing (img_original, facteur):
 
-    print(img_original.width, end = 'Img originale width\n')
+    #print(img_original.width, end = 'Img originale width\n')
 
-    print(img_original.height, end = 'Img originale height\n')
+    #print(img_original.height, end = 'Img originale height\n')
     img_final = img_original.resize((int(img_original.width*facteur),int(img_original.height*facteur)))
     
-    print(img_final.width, end = 'Img final width\n')
-    print(img_final.height, end = 'Img finale height\n')
+    #print(img_final.width, end = 'Img final width\n')
+    #print(img_final.height, end = 'Img finale height\n')
     return img_final
     
-def interface ():
-    frame = tk.Frame
-    
+
+#methode inutile
 def set_height(h):
     global height 
     height = h
-
+#methode inutile
 def set_width(w):
     global width 
     width = w
+
 
 
 def testHue (r,g,b):
@@ -136,7 +152,7 @@ def hue_evaluate (array, compare):
     return False
 
 def color_change (img, compare):
-    tab_bool = [[False for i in range(img.height)] for j in range(img.width)]
+    array = [[False for i in range(img.height)] for j in range(img.width)]
     hue_array = [[0 for i in range(img.height)] for j in range(img.width)]
     liste_pixels = [0 for i in range(5)]
     
@@ -159,14 +175,15 @@ def color_change (img, compare):
                 r,g,b =  img.getpixel((i,j-1))
                 liste_pixels[4] = testHue(r,g,b)
                 
-                tab_bool[i][j] = hue_evaluate(liste_pixels, compare)
+                array[i][j] = hue_evaluate(liste_pixels, compare)
             except : 
                 print ("", end = '')
             finally :
                 j+=1
         j=0
         i+=1
-    affichage_booleen (tab_bool)
+    #affichage_booleen (array)
+    return array
 
 
 compare = 6
@@ -175,10 +192,14 @@ difference = 34
 
 img = Image.open("/home/vincent/bdeb_cnc/images/angela.png")
 facteur = 0.7
-resized_img = resizing(img, facteur)
-mapping_image(resized_img,threshold)
-color_change(resized_img, difference)
-contour_image(resized_img, difference)
+
+######################
+### tests initiaux ###
+######################
+#resized_img = resizing(img, facteur)
+#mapping_image(resized_img,threshold)
+#color_change(resized_img, difference)
+#contour_image(resized_img, difference)
 
 #tableau = [[True, True, False, False, False],[True, True, True, False, False],[False, False, False, False, False],[True, True, True, True, True]]
 #affichage_booleen(tableau)
