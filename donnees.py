@@ -31,18 +31,14 @@ def generate_image_preview():
 def image_loading_array ():
     global image_booleen
     image_booleen = [[False for i in range(largeur_nouvelle)] for j in range(hauteur_nouvelle)]
-    switch(mode):
-        case 0:
-            image_booleen = cnc_v1.mapping_image()
-            break
-        case 1:
-            image_booleen = cnc_v1.contour_image()
-            break;
-        case 2:
-            image_booleen = cnc_v1.color_change()
-            break;
-        default:
-            print('option non accessible')
+    if mode == 0:
+        image_booleen = cnc_v1.mapping_image()
+    elif mode == 1:
+        image_booleen = cnc_v1.contour_image()
+    elif mode == 2:
+        image_booleen = cnc_v1.color_change()
+    else:
+        print('option non accessible')
 
 def update_premiere_page():
     info_image()
