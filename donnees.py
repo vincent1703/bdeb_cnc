@@ -15,7 +15,8 @@ facteur = 1
 facteur_max = 1
 
 def image_loading ():
-    global image_booleen = [[False for i in range(image_contour["largeur"])] for j in range(image_contour["hauteur"])]
+    global image_booleen
+    image_booleen = [[False for i in range(largeur_nouvelle)] for j in range(hauteur_nouvelle)]
 
 def info_image ():
     image = Image.open(image_path)
