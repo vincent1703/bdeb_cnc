@@ -14,6 +14,7 @@ def generate_preview(array):
             j+=1
         j=0
         i+=1
+    print("test")
     preview.save(donnees.preview_path)
 
 #utile pour debug seulement
