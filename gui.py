@@ -1,5 +1,6 @@
-from guizero import App, Text, TextBox, PushButton, info, Picture
+from guizero import App, Text, TextBox, PushButton, info, Picture, ButtonGroup, Combo
 import donnees
+
 
 def chercher_fichier():
     donnees.image_path = app.select_file(filetypes=[["Images png", "*.png"], ["Images jpeg", "*.jpeg"],["Images jpg", "*.jpg"], ["Images gif", "*.gif"]])
@@ -18,6 +19,24 @@ def confirmer_hauteur():
 def confirmer_largeur():
     donnees.largeur_surface = largeur_boite.value
     largeur_boite.value = donnees.largeur_surface
+
+def confirmer_espacement():
+    if (selection_espacement.value == '1 mm'):
+        donnees.espacement = 1
+    elif (selection_espacement.value == '0,4 mm'):
+        donnees.espacement = 0.4
+    elif (selection_espacement.value == '0,7 mm'):
+        donnees.espacement = 0.7
+    elif (selection_espacement.value == '2 mm'):
+        donnees.espacement = 2
+    elif (selection_espacement.value == '3 mm'):
+        donnees.espacement = 3
+    elif (selection_espacement.value == '5 mm'):
+        donnees.espacement = 5
+
+def affichage_preview():
+    donnees.generate_image_preview
+    preview = Picture(app, image=donnees.preview_path, grid=[2,5])
 
 app = App(layout="grid", width = 1280, height = 720)
 
@@ -38,7 +57,26 @@ hauteur_boite = TextBox(app, "100", width = 10, grid = [1,3], align="left")
 bouton_confirmer_hauteur = PushButton(app, text = "Ok", command = confirmer_hauteur, grid = [1,3])
 confirmer_chemin()
 
-bouton_merde = PushButton(app, text = "oh shit tabarnak", grid = [2,4])
+espacement_tag = Text(app, "Espacement (qualité d'impression)", grid = [0,4], align="left")
+selection_espacement = Combo(app, options=["0,4 mm", "0,7 mm", "1 mm", '2 mm', '3 mm', '5 mm'], selected='1 mm', command = confirmer_espacement,  grid=[1,4], align='left')
+bouton_confirmer_hauteur = PushButton(app, text = "Ok", command = confirmer_espacement, grid = [1,4])
+
+bouton_preview = PushButton(app, text='generer preview', command=affichage_preview, grid = [1,5])
 
 app.display()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
