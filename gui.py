@@ -38,5 +38,7 @@ hauteur_boite = TextBox(app, "100", width = 10, grid = [1,3], align="left")
 bouton_confirmer_hauteur = PushButton(app, text = "Ok", command = confirmer_hauteur, grid = [1,3])
 confirmer_chemin()
 
+bouton_merde = PushButton(app, text = "oh shit tabarnak", grid = [2,4])
+
 app.display()
 
