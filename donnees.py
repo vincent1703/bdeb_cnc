@@ -14,10 +14,10 @@ largeur_nouvelle = 1
 hauteur_machine_max = 400
 largeur_machine_max = 300
 
-facteur = 1
 facteur_max = 1
 
 mode = 0
+estimation = 0.0
 
 compare = 6
 threshold = 60
@@ -27,6 +27,10 @@ difference = 34
 def generate_image_preview():
     preview_image = cnc_v1.generate_preview(image_booleen)
     return preview_image
+
+def generate_estimation():
+    estimation = cnc_v1.time_estimation()
+    return estimation
 
 def image_loading_array ():
     global image_booleen
@@ -87,8 +91,6 @@ def set_img_new_height(new_height):
 def set_img_new_width(new_width):
     largeur_nouvelle = new_width
 
-def get_facteur():
-    return facteur
 def get_facteur_max():
     return facteur_max
 def get_img_new_height():

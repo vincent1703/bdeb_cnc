@@ -185,6 +185,18 @@ def color_change (img, compare):
     #affichage_booleen (array)
     return array
 
+def time_estimation ():
+    time_in_seconds = 0.0
+    for i in range (donnes.image_booleen.len):
+        for j in range (donnees.image_booleen[i].len):
+            if donnees.image_booleen[i][j] == True:
+                time_in_seconds += 0.2
+            else :
+                time_in_seconds += 0.05
+            j+=1
+        j=0
+        i+=1
+    return time_in_seconds
 
 compare = 6
 threshold = 60
