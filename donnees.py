@@ -3,7 +3,7 @@ from PIL import Image
 espacement = 1
 largeur_surface = 20
 hauteur_surface = 30
-image_path = "/home/vincent/bdeb_cnc/images/angela.png"
+image_path = "images/apercu.png"
 
 hauteur_originale = 1
 largeur_originale = 1
@@ -18,6 +18,7 @@ facteur_max = 1
 
 mode = 0
 estimation = 0.0
+preview_path = "images/preview.png"
 
 compare = 6
 threshold = 60
@@ -26,7 +27,7 @@ difference = 34
 
 def generate_image_preview():
     preview_image = cnc_v1.generate_preview(image_booleen)
-    return preview_image
+    preview_image.save(preview_path)
 
 def generate_estimation():
     estimation = cnc_v1.time_estimation()
