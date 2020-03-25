@@ -13,11 +13,11 @@ def confirmer_chemin():
     apercu.resize(150,150)
 
 def confirmer_hauteur():
-    donnees.hauteur_surface = hauteur_boite.value
+    donnees.hauteur_surface = int(hauteur_boite.value)
     hauteur_boite.value = donnees.hauteur_surface
 
 def confirmer_largeur():
-    donnees.largeur_surface = largeur_boite.value
+    donnees.largeur_surface = int(largeur_boite.value)
     largeur_boite.value = donnees.largeur_surface
 
 def confirmer_espacement():
@@ -35,14 +35,15 @@ def confirmer_espacement():
         donnees.espacement = 5
 
 def affichage_preview():
-    donnees.generate_image_preview
+    donnees.update_premiere_page()
+    donnees.generate_image_preview()
     preview = Picture(app, image=donnees.preview_path, grid=[2,5])
 
 app = App(layout="grid", width = 1280, height = 720)
 
 app.info("Bienvenue", "Pour commencer :\n 1) Sélectionnez l'image source\n 2) Sélectionnez les dimensions de la surface d'impression")
 
-chemin_image = TextBox(app, "images/apercu.png", grid=[1,0], width = 80)
+chemin_image = TextBox(app, "images/burger.jpeg", grid=[1,0], width = 80)
 
 bouton_selection = PushButton(app, command = chercher_fichier, text = "Sélectionner l'image", grid=[0,0])
 bouton_confirmer = PushButton(app, command = confirmer_chemin, text = "Ok", grid=[2,0])

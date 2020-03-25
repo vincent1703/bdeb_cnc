@@ -1,4 +1,5 @@
 from PIL import Image
+import cnc_v1
 
 espacement = 1
 largeur_surface = 20
@@ -8,8 +9,8 @@ image_path = "images/apercu.png"
 hauteur_originale = 1
 largeur_originale = 1
 
-hauteur_nouvelle = 1
-largeur_nouvelle = 1
+hauteur_nouvelle = 100
+largeur_nouvelle = 100
 
 hauteur_machine_max = 400
 largeur_machine_max = 300
@@ -47,22 +48,34 @@ def image_loading_array ():
 
 def update_premiere_page():
     info_image()
+    print('info_image')
     calcul_facteur_max()
+    print('facteur_max')
     image_final_size()
+    print('final_size')
+    image_loading_array()
+    print('leopold')
 
 
 def info_image ():
     global image
     image = Image.open(image_path)
+    global hauteur_originale
     hauteur_originale = image.height
+    global largeur_originale
     largeur_originale = image.width
 
 def calcul_facteur_max():
+    global limite_hauteur
     limite_hauteur = test_facteur(hauteur_originale, hauteur_surface, espacement)
+    global limite_largeur
     limite_largeur = test_facteur(largeur_originale, largeur_surface, espacement)
+    
     if limite_hauteur >= limite_largeur:
+        global facteur_max
         facteur_max = limite_largeur
     else:
+        global facteur_max
         facteur_max = limite_hauteur
 
 def test_facteur(original,surface,espacement):

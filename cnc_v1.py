@@ -1,16 +1,21 @@
-from PIL import Image
+from PIL import Image, ImageDraw
 import random
 import donnees
 from array import *
 
 def generate_preview(array):
-    preview = Image.new('RGB',(donnees.largeur_nouvelle, donnees.hauteur_nouvelle), (255,255,255))
+    preview = Image.new('RGB',(donnees.image_final.width, donnees.image_final.height), (255,255,255))
+    
+    preview.save("images/previewTest.png")
+
+    i=0
+    j=0
     for i in range(preview.width):
-        for j in range(previw.height):
+        for j in range(preview.height):
             if array[i][j] == True:
-                preview.Draw.point((i,j), (0,0,0))
+                preview.ImageDraw.Draw.point((i,j), (0,0,0))
             else:
-                preview.Draw.point((i,j), (255,255,255))
+                preview.ImageDraw.Draw.point((i,j), (255,255,255))
             j+=1
         j=0
         i+=1
@@ -49,13 +54,13 @@ def mapping_image():
         for x in y:
             r,g,b = img.getpixel((i,j))
             if r < threshold:
-                x = True
+                array[j][i] = True
                 #print ("█", end = '')
             elif g < threshold:
-                x = True
+                array[j][i] = True
                 #print ("█", end = '')
             elif b < threshold:
-                x = True
+                array[j][i] = True
                 #print("█", end = '')
             else:
                 print ("", end = '')
