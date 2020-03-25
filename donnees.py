@@ -26,7 +26,7 @@ difference = 34
 
 
 def generate_image_preview():
-    preview_image = cnc_v1.generate_preview(image_booleen)
+    cnc_v1.generate_preview(image_booleen)
     preview_image.save(preview_path)
 
 def generate_estimation():

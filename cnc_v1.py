@@ -14,7 +14,7 @@ def generate_preview(array):
             j+=1
         j=0
         i+=1
-    return preview
+    preview.save(donnees.preview_path)
 
 #utile pour debug seulement
 def affichage_booleen (array):
