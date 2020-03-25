@@ -23,7 +23,7 @@ app = App(layout="grid", width = 1280, height = 720)
 
 app.info("Bienvenue", "Pour commencer :\n 1) Sélectionnez l'image source\n 2) Sélectionnez les dimensions de la surface d'impression")
 
-chemin_image = TextBox(app, "/home/vincent/bdeb_cnc/images/apercu.png", grid=[1,0], width = 80)
+chemin_image = TextBox(app, "images/apercu.png", grid=[1,0], width = 80)
 
 bouton_selection = PushButton(app, command = chercher_fichier, text = "Sélectionner l'image", grid=[0,0])
 bouton_confirmer = PushButton(app, command = confirmer_chemin, text = "Ok", grid=[2,0])
