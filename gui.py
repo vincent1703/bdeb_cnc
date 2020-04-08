@@ -1,16 +1,16 @@
-from guizero import App, Text, TextBox, PushButton, info, Picture, ButtonGroup, Combo, Window
+from guizero import App, Text, TextBox, PushButton, info, Picture, ButtonGroup, Combo, Window, Picture
 import donnees
-
 
 def chercher_fichier():
     donnees.image_path = app.select_file(filetypes=[["Images png", "*.png"], ["Images jpeg", "*.jpeg"],["Images jpg", "*.jpg"], ["Images gif", "*.gif"]])
-    chemin_image.value = donnees.image_path
+    #chemin_image.value = donnees.image_path
 
 def confirmer_chemin():
-    donnees.image_path = chemin_image.value
-    global apercu
-    apercu = Picture(premiere, image=donnees.image_path, grid=[3,0])
-    apercu.resize(150,150)
+    #donnees.image_path = chemin_image.value
+    print(donnees.image_path)
+    #global apercu
+    #apercu = Picture(premiere, image=donnees.image_path, grid=[3,0], width=100, height=100)
+    #apercu.resize(150,150)
 
 def confirmer_hauteur():
     donnees.hauteur_surface = int(hauteur_boite.value)
@@ -90,7 +90,7 @@ bouton_confirmer_premiere_page = PushButton(premiere, text = "Confirmer les info
 bouton_preview = PushButton(premiere, text='generer preview', command=affichage_preview, grid = [1,5])
 
 app.display()
-
+premiere.when_closed = premiere.destroy()
 
 
 

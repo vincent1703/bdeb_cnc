@@ -6,16 +6,17 @@ from array import *
 def generate_preview(array):
     preview = Image.new('RGB',(donnees.image_final.width, donnees.image_final.height), (255,255,255))
     
-    preview.save("images/previewTest.png")
-
+    preview.save(donnees.preview_path)
+    
+    pixels = preview.load()
     i=0
     j=0
-    for i in range(preview.width):
-        for j in range(preview.height):
-            if array[i][j] == True:
-                preview.ImageDraw.Draw.point((i,j), (0,0,0))
+    for i in range(len(donnees.image_booleen)):
+        for j in range(len(donnees.image_booleen[i])):
+            if donnees.image_booleen[i][j] == True:
+                pixels[j,i] = (0,0,0)
             else:
-                preview.ImageDraw.Draw.point((i,j), (255,255,255))
+                pixels[j,i] = (255,255,255)
             j+=1
         j=0
         i+=1
@@ -208,7 +209,7 @@ compare = 6
 threshold = 60
 difference = 34 
 
-img = Image.open("/home/vincent/bdeb_cnc/images/angela.png")
+img = Image.open("images/angela.png")
 facteur = 0.7
 
 ######################

@@ -4,7 +4,7 @@ import cnc_v1
 espacement = 1
 largeur_surface = 20
 hauteur_surface = 30
-image_path = "images/apercu.png"
+image_path = "images/mendel.png"
 
 hauteur_originale = 1
 largeur_originale = 1
@@ -14,8 +14,6 @@ largeur_nouvelle = 100
 
 hauteur_machine_max = 400
 largeur_machine_max = 300
-
-facteur_max = 1
 
 mode = 0
 estimation = 0.0
@@ -28,7 +26,7 @@ difference = 34
 
 def generate_image_preview():
     cnc_v1.generate_preview(image_booleen)
-    preview_image.save(preview_path)
+    #preview_image.save(preview_path)
 
 def generate_estimation():
     estimation = cnc_v1.time_estimation()
@@ -71,11 +69,10 @@ def calcul_facteur_max():
     global limite_largeur
     limite_largeur = test_facteur(largeur_originale, largeur_surface, espacement)
     
+    global facteur_max
     if limite_hauteur >= limite_largeur:
-        global facteur_max
         facteur_max = limite_largeur
     else:
-        global facteur_max
         facteur_max = limite_hauteur
 
 def test_facteur(original,surface,espacement):
