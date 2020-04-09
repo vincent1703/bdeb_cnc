@@ -1,15 +1,17 @@
 from guizero import App, Text, TextBox, PushButton, info, Picture, ButtonGroup, Combo, Window, Picture
 import donnees
+import tkinter as tk
+from tkinter import Label
 
 def chercher_fichier():
     donnees.image_path = app.select_file(filetypes=[["Images png", "*.png"], ["Images jpeg", "*.jpeg"],["Images jpg", "*.jpg"], ["Images gif", "*.gif"]])
-    #chemin_image.value = donnees.image_path
+    chemin_image.value = donnees.image_path
 
 def confirmer_chemin():
     #donnees.image_path = chemin_image.value
     print(donnees.image_path)
-    #global apercu
-    #apercu = Picture(premiere, image=donnees.image_path, grid=[3,0], width=100, height=100)
+    global apercu
+    apercu = Picture(premiere, image=donnees.image_path, grid=[3,0], width=150, height=150)
     #apercu.resize(150,150)
 
 def confirmer_hauteur():
@@ -37,7 +39,7 @@ def confirmer_espacement():
 def affichage_preview():
     donnees.update_premiere_page()
     donnees.generate_image_preview()
-    preview = Picture(app, image=donnees.preview_path, grid=[2,5])
+    preview = Picture(deuxieme, image=donnees.preview_path, grid=[1,1])
 
 def fermer():
     app.destroy()
@@ -55,15 +57,15 @@ def confirmation_premiere_page():
 
 app = App(title='CNC_BdeB', layout="grid", width = 1280, height = 720, visible=False)
 
-#app.info("Bienvenue", "Pour commencer :\n 1) Sélectionnez l'image source\n 2) Sélectionnez les dimensions de la surface d'impression")
+app.info("Bienvenue", "Pour commencer :\n 1) Sélectionnez l'image source\n 2) Sélectionnez les dimensions de la surface d'impression")
 
-premiere = Window(app, layout="grid", title = "Paramètres d'impression", width = 1280, height = 720, visible=True)
-premiere.when_closed = print("patate")
+premiere = Window(app, layout="grid", title = "Paramètres d'impression", width = 880, height = 720, visible=True)
+premiere.when_closed = fermer
 
 deuxieme = Window(premiere, layout="grid", title = "Lancement de l'impression", width = 900, height = 500)
 deuxieme.hide()
 
-chemin_image = TextBox(premiere, "images/mendel.png", grid=[1,0], width = 80)
+chemin_image = TextBox(premiere, "images/mendel.png", grid=[1,0], width = 40)
 
 bouton_selection = PushButton(premiere, command = chercher_fichier, text = "Sélectionner l'image", grid=[0,0])
 bouton_confirmer = PushButton(premiere, command = confirmer_chemin, text = "Ok", grid=[2,0])
@@ -87,10 +89,9 @@ bouton_confirmer_premiere_page = PushButton(premiere, text = "Confirmer les info
 
 
 
-bouton_preview = PushButton(premiere, text='generer preview', command=affichage_preview, grid = [1,5])
+bouton_preview = PushButton(deuxieme, text='generer preview', command=affichage_preview, grid = [0,1])
 
 app.display()
-premiere.when_closed = premiere.destroy()
 
 
 
