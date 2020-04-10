@@ -25,6 +25,7 @@ difference = 34
 
 
 def generate_image_preview():
+    image_loading_array()
     cnc_v1.generate_preview(image_booleen)
     #preview_image.save(preview_path)
 
@@ -46,13 +47,11 @@ def image_loading_array ():
 
 def update_premiere_page():
     info_image()
-    print('info_image')
+    #print('info_image')
     calcul_facteur_max()
-    print('facteur_max')
+    #print('facteur_max')
     image_final_size()
-    print('final_size')
-    image_loading_array()
-    print('leopold')
+    #print('final_size')
 
 
 def info_image ():

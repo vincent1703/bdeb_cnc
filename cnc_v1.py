@@ -13,10 +13,16 @@ def generate_preview(array):
     j=0
     for i in range(len(donnees.image_booleen)):
         for j in range(len(donnees.image_booleen[i])):
-            if donnees.image_booleen[i][j] == True:
-                pixels[j,i] = (0,0,0)
-            else:
-                pixels[j,i] = (255,255,255)
+            try:
+                if(i == 20):
+                    pixels[j,i] = (255,0,0)
+                elif donnees.image_booleen[i][j] == True:
+                    pixels[j,i] = (0,0,0)
+                else:
+                    pixels[j,i] = (255,255,255)
+            except:
+                print(i,end=" i\t")
+                print(j,end=" j\n")
             j+=1
         j=0
         i+=1
@@ -73,8 +79,9 @@ def mapping_image():
     return array
 
 
-def contour_image(img, difference):
-    array = [[False for i in range(img.height)] for j in range(img.width)]
+def contour_image():
+    img = donnees.image_final
+    array = [[False for i in range(img.width)] for j in range(img.height)]
     liste_pixels = [[0 for i in range(3)] for j in range(5)]
     
     i = 0
@@ -88,7 +95,7 @@ def contour_image(img, difference):
                 liste_pixels[3] = img.getpixel((i-1,j))
                 liste_pixels[4] = img.getpixel((i,j-1))
                 
-                array[i][j] = verification_contour(liste_pixels, difference)
+                array[j][i] = verification_contour(liste_pixels, donnees.difference)
             except : 
                 print ("", end = '')
 
@@ -119,7 +126,7 @@ def resizing (img_original, facteur):
 
     #print(img_original.height, end = 'Img originale height\n')
     img_final = img_original.resize((int(img_original.width*facteur),int(img_original.height*facteur)))
-    
+    print("resize complet")
     #print(img_final.width, end = 'Img final width\n')
     #print(img_final.height, end = 'Img finale height\n')
     return img_final
@@ -150,17 +157,18 @@ def testHue (r,g,b):
         temp = (r-g)/c + 4
     return 60*temp
 
-def hue_evaluate (array, compare):
+def hue_evaluate (array):
     for pixel in array:
-        if (pixel - array[0]) > compare:
+        if (pixel - array[0]) > donnees.compare:
             return True
-        elif (array[0] - pixel) > compare:
+        elif (array[0] - pixel) > donnees.compare:
             return True
     return False
 
-def color_change (img, compare):
-    array = [[False for i in range(img.height)] for j in range(img.width)]
-    hue_array = [[0 for i in range(img.height)] for j in range(img.width)]
+def color_change ():
+    img = donnees.image_final
+    array = [[False for i in range(img.width)] for j in range(img.height)]
+    hue_array = [[0 for i in range(img.width)] for j in range(img.height)]
     liste_pixels = [0 for i in range(5)]
     
     
@@ -168,21 +176,21 @@ def color_change (img, compare):
     j=0
     for x  in hue_array:
         for y in x:
-            r,g,b = img.getpixel((i,j))
+            r,g,b = img.getpixel((j,i))
             y = testHue(r,g,b)
             try :
-                r,g,b =  img.getpixel((i,j))
+                r,g,b =  img.getpixel((j,i))
                 liste_pixels[0] = testHue(r,g,b)
-                r,g,b =  img.getpixel((i+1,j))
+                r,g,b =  img.getpixel((j+1,i))
                 liste_pixels[1] = testHue(r,g,b) 
-                r,g,b =  img.getpixel((i,j+1))
+                r,g,b =  img.getpixel((j,i+1))
                 liste_pixels[2] = testHue(r,g,b)
-                r,g,b =  img.getpixel((i-1,j))
+                r,g,b =  img.getpixel((j-1,i))
                 liste_pixels[3] = testHue(r,g,b)
-                r,g,b =  img.getpixel((i,j-1))
+                r,g,b =  img.getpixel((j,i-1))
                 liste_pixels[4] = testHue(r,g,b)
                 
-                array[i][j] = hue_evaluate(liste_pixels, compare)
+                array[j][i] = hue_evaluate(liste_pixels)
             except : 
                 print ("", end = '')
             finally :
