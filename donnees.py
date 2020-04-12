@@ -87,7 +87,8 @@ def test_facteur(original,surface,espacement):
 def image_final_size():
     global image_final
     image_final = cnc_v1.resizing(image,facteur_max)
-
+    largeur_nouvelle = image_final.width
+    hauteur_nouvelle = image_final.height
 
 
 ################

@@ -11,8 +11,6 @@ def mapping_image():
     threshold = donnees.threshold
     img = donnees.image_final
     array = [[False for i in range(img.width)] for j in range(img.height)]
-    print(img.height)
-    print(img.width)
     i=0
     j=0
     for y in array:
