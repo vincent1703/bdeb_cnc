@@ -23,6 +23,11 @@ compare = 6
 threshold = 60
 difference = 34
 
+nb_step_x = 0                           # Compteur du nb de steps fait de droite a gauche
+nb_step_y = 0                           # Compteur du nb de steps fait de haut en bas
+DELAIS_STEP = 0.002                     # Delais en secondes entre chaque changement de step 
+DELAIS_SOLENOIDE = 0.5                  # Delais en secondes pour lequel le solenoide est active
+
 
 def generate_image_preview():
     image_loading_array()
