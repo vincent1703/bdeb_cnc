@@ -1,7 +1,7 @@
-from guizero import App, Text, TextBox, PushButton, info, Picture, ButtonGroup, Combo, Window, Picture
+from guizero import App, Text, TextBox, PushButton, info, Picture, ButtonGroup, Combo, Window, Picture, Slider
 import donnees
 import tkinter as tk
-from tkinter import Label
+from tkinter import Label, Scale
 import os
 
 #va chercher un fichier dans le folder images
@@ -116,7 +116,22 @@ def fenetre_depart():
     app.info("Bienvenue", "Pour commencer :\n 1) Sélectionnez l'image source\n 2) Sélectionnez les dimensions de la surface d'impression")
 
 def page_ajustement():
-    print("ajustements")
+    ajustement.show(wait=True)
+
+def changement_contraste(contraste_value):
+    text_contraste.value = contraste_value
+
+def changement_luminosite(luminosite_value):
+    text_luminosite.value = luminosite_value
+
+def changement_couleur(couleur_value):
+    text_couleur.value = couleur_value
+
+def ajuster():
+    donnees.threshold = int(text_contraste.value)
+    donnees.difference = int(text_luminosite.value)
+    donnees.compare = int(text_couleur.value)
+    ajustement.hide()
 
 def informations():
     info = "image: " + str(os.path.basename(donnees.image_path)) + "\nlargeur(mm): " + str(donnees.largeur_nouvelle * donnees.espacement) + "\nhauteur(mm): " + str(donnees.hauteur_nouvelle * donnees.espacement) + "\nespacement(mm): " + str(donnees.espacement)
@@ -163,6 +178,26 @@ bouton_preview = PushButton(deuxieme, text='generer preview', command=affichage_
 bouton_parametre = PushButton(deuxieme, text="parametre d'impression", command=page_ajustement, grid=[2,0])
 
 bouton_info = PushButton(deuxieme, text="informations", command=informations, grid=[0,2])
+
+
+########################
+### page ajustements ###
+########################
+ajustement = Window(app, layout="grid", title="ajustements",width=600,height=400)
+ajustement.hide()
+ajustement.when_closed = ajuster
+
+titre_contraste = Text(ajustement, "contraste", grid=[0,0], align="bottom")
+contraste = Slider(ajustement,command=changement_contraste,end=200,grid=[1,0],start=20,enabled=True,width=400,height=20)
+text_contraste = Text(ajustement,contraste.value, grid=[2,0],align="bottom")
+
+titre_luminosite = Text(ajustement, "luminosite", grid=[0,1], align="bottom")
+luminosite = Slider(ajustement,command=changement_luminosite,end=100,grid=[1,1],start=2 ,enabled=True,width=400,height=20)
+text_luminosite = Text(ajustement,contraste.value, grid=[2,1],align="bottom")
+
+titre_couleur = Text(ajustement, "couleur", grid=[0,2], align="bottom")
+couleur = Slider(ajustement,command=changement_couleur,end=80 ,grid=[1,2],start=2 ,enabled=True,width=400,height=20)
+text_couleur = Text(ajustement,contraste.value, grid=[2,2],align="bottom")
 
 app.display()
 
