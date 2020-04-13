@@ -29,6 +29,7 @@ def menu_principal():
             print("")
         except:
             choix = -1
+        #switch n'existe pas en python
         if choix == 0:
             image_path()
         elif choix == 1:
@@ -54,11 +55,10 @@ def menu_principal():
 def image_path():
     print("Selection de l'image\n")
     valide = False
-    default_path = "/images/mendel.png"
-    prefix = ""
     prefix = os.path.dirname(os.path.abspath(__file__))
     ajout_dir = "/images/"
     temp = ""
+    default_path = prefix + "/images/mendel.png"
     while(not valide):
         temp = input("nom de l'image et type: ")
         temp = prefix + ajout_dir + temp
@@ -72,19 +72,19 @@ def image_path():
             print("Choix d'image invalide")
             entry = input("Voulez-vous recommencer[Oui/non]? ")
             if "non" in entry.lower():
-                donnees.image_path = prefix + default_path
+                donnees.image_path = default_path
                 valide = True
 
 #selection largeur et longueur
 def largeur_longueur():
     print("Selection de la largeur et de la longueur\n")
-    donnees.largeur_surface = validation_int("largeur", 1, donnees.largeur_machine_max)
-    donnees.hauteur_surface = validation_int("hauteur", 1, donnees.hauteur_machine_max)
+    donnees.largeur_surface = validation_int("largeur(mm)", 1, donnees.largeur_machine_max)
+    donnees.hauteur_surface = validation_int("hauteur(mm)", 1, donnees.hauteur_machine_max)
 
 #selection espacement
 def espacement():
     print("Selection de l'espacement\n")
-    donnees.espacement = validation_double("espacement", 0.2, 5.0)
+    donnees.espacement = validation_double("espacement(mm)", 0.2, 5.0)
 
 #selection mode d'impression
 def mode_impression():
@@ -108,14 +108,15 @@ def parametre():
     else:
         print("Probleme de selection du mode")
 
+#explications pour l'ajustement des parametres
 def param_0():
-    print("Dans le mode contraste, le parametre determine la valeur RGB (0-255) necessaire a une des trois couleurs pour la considerer comme foncee.\nPlus cette valeur est grande, moins il y aura de points a imprimer\nLa valeur doit se situer entre 20 et 200")
+    print("Dans le mode contraste, le parametre determine la valeur RGB (0-255) necessaire a une des trois couleurs pour la considerer comme foncee.\nPlus cette valeur est grande, moins il y aura de points a imprimer\nLa valeur doit se situer entre 20 et 200\n")
     donnees.threshold = validation_int("parametre", 20, 200)
 def param_1():
-    print("Dans le mode contour de luminosite, le parametre determine la difference de valeur RGB(0-255) necessaire entre 2 pixels voisins pour considerer un changement de luminosite.\nPlus cette valeur est grande par rapport au nombre de pixels, moins il y aura de points a imprimer.\nLa valeur doit se situer entre 2 et 100")
+    print("Dans le mode contour de luminosite, le parametre determine la difference de valeur RGB(0-255) necessaire entre 2 pixels voisins pour considerer un changement de luminosite.\nPlus cette valeur est grande par rapport au nombre de pixels, moins il y aura de points a imprimer.\nLa valeur doit se situer entre 2 et 100\n")
     donnees.difference = validation_int("parametre", 2, 100)
 def param_2():
-    print("Dans le mode contour de couleur, le parametre determine la difference de valeur hue(0-360) necessaire entre 2 pixels voisins pour considerer un changement de couleur.\nPlus cette valeur est grande par rapport au nombre de pixels, moins il y aura de points a imprimer.\nLa valeur doit se trouver entre 2 et 100")
+    print("Dans le mode contour de couleur, le parametre determine la difference de valeur hue(0-360) necessaire entre 2 pixels voisins pour considerer un changement de couleur.\nPlus cette valeur est grande par rapport au nombre de pixels, moins il y aura de points a imprimer.\nLa valeur doit se trouver entre 2 et 100\n")
     donnees.compare = validation_int("parametre", 2, 100)
 
 #generer preview
@@ -123,13 +124,15 @@ def generer_preview():
     donnees.update_premiere_page()
     donnees.generate_image_preview()
     print("Une nouvelle image preview a ete generee\n")
+
 #affichage des choix actuels
+#image_path, largeur, hauteur, mode, parametre
 def affichage_actuel():
     donnees.update_premiere_page()
     print("Affichage des informations actuelles d'impression\n")
     print("image path: " + str(donnees.image_path))
-    print("largeur(mm): " + str(donnees.largeur_nouvelle), end='    ')
-    print("hauteur(mm): " + str(donnees.hauteur_nouvelle))
+    print("largeur(mm): " + str(donnees.largeur_nouvelle * donnees.espacement), end='    ')
+    print("hauteur(mm): " + str(donnees.hauteur_nouvelle * donnees.espacement))
     print("espacement(mm): " + str(donnees.espacement))
     if donnees.mode == 0:
         print("mode: contraste")
@@ -142,7 +145,7 @@ def affichage_actuel():
         print("parametre: " + str(donnees.compare))
     print("---------------------------------------")
 
-#debuter l'impression
+#debuter l'impression avec verification
 def impression():
     print ("Voici les informations de l'impression: ")
     affichage_actuel()
@@ -161,7 +164,7 @@ def quitter():
     return continuer
 #message d'accueil
 def accueil():
-    print("#################################################")
+    print("\n#################################################")
     print("### Bienvenue dans la version texte de la CNC ###")
     print("#################################################\n")
     menu_principal()
@@ -206,5 +209,5 @@ def validation_double(param_string, minimum,  maximum):
 #fin des methodes
 ######################
 accueil()
-
+#fin du programme
 ######################
