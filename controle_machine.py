@@ -31,12 +31,12 @@ def impression():
             #print(j, end = 'j  ')
             if array[j][i] == True:
                 impression_point()
-            prochain_point()                                               
+            prochain_point()    
                     
         prochaine_ligne()
 
 
-# Fait en sorte que le solenoide s'actionne pour  l'impression
+# Fait en sorte que le solenoide s'actionne pour l'impression
 def impression_point():
     print('point imprime')
 
@@ -139,39 +139,42 @@ DELAIS_SOLENOIDE = 0.5  # Delais que doit passer le relais du solenoide en posit
 
 
 
-#####################
-# Plan de reference #
-#####################
-#
-#      Buse 
-#      ↓                      🢂 x
-#   O------------------------O
-#   | ***                    |
-#   | ***   🡆  🡆  🡆  🡆  🡆 ⤶  |
-#   | ***    <------------   |
-#   |       🡆  🡆  🡆  🡆  🡆 ⤶  |          Haut    🡹 (y)
-#   |        <------------   |          Bas     🡻 (y)
-#   |       🡆  🡆  🡆  🡆  🡆 ⤶  |          Gauche  🡸 (x)
-#   |        <------------   |          Droite  🡺 (x)
-#   |       🡆  🡆  🡆  🡆  🡆 ⤶  |
-#   |        <------------   |
-#   |       🡆  🡆  🡆  🡆  🡆 ⤶  |
-#   |        <------------   |
-#   |       🡆  🡆  🡆  🡆  🡆 ⤶  |
-#   |        <------------   |
-#   |                        |
-#   O------------------------O
-#  🢃
-#  y
-# 
-#  Note : impression de gauche a droite, de haut en bas (toujours)
-#
+#############################################################################
+# Plan de reference #                                                       #
+#####################                                                       #
+#                                                                           #
+#      Buse                                                                 #
+#      ↓                      🢂 x                                           #
+#   O------------------------O                                              #
+#   | ***                    |                                              #
+#   | ***   🡆  🡆  🡆  🡆  🡆 ⤶  |                                              #
+#   | ***    <------------   |                                              #
+#   |       🡆  🡆  🡆  🡆  🡆 ⤶  |          Haut    🡹 (y)                       #
+#   |        <------------   |          Bas     🡻 (y)                       #
+#   |       🡆  🡆  🡆  🡆  🡆 ⤶  |          Gauche  🡸 (x)                       #
+#   |        <------------   |          Droite  🡺 (x)                       #
+#   |       🡆  🡆  🡆  🡆  🡆 ⤶  |                                              #
+#   |        <------------   |                                              #
+#   |       🡆  🡆  🡆  🡆  🡆 ⤶  |                                              #
+#   |        <------------   |                                              #
+#   |       🡆  🡆  🡆  🡆  🡆 ⤶  |                                              #
+#   |        <------------   |                                              #
+#   |                        |                                              #
+#   O------------------------O                                              #
+#  🢃                                                                        #
+#  y                                                                        #
+#                                                                           #
+#  Note : impression de gauche a droite, de haut en bas (toujours)          #
+#                                                                           #
+#############################################################################
 
 
 ###################
 # Setup pins GPIO #
 ###################
 
+EN_X = 2                # Pin poour activer le controleur 1 (X)
+EN_Y = 3                # Pin poour activer le controleur 2 (Y)
 DIR_X = 20              # Numero de la pin utilisee pour la direction du stepper deplacant de gauche a droite 
 DIR_Y = 19              # Numero de la pin utilisee pour la direction du stepper deplacant de haut en bas
 STEP_X = 21             # Numero de la pin utilisee pour activer d'un step le stepper deplacant de gauche a droite 
@@ -183,6 +186,8 @@ SAH = 0                 # Valeur du sens de rotation antihoraire (0)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(DIR_X, GPIO.OUT)
 GPIO.setup(DIR_Y, GPIO.OUT)
+GPIO.setup(EN_X, GPIO.OUT)
+GPIO.setup(EN_Y, GPIO.OUT)
 GPIO.setup(STEP_X, GPIO.OUT)
 GPIO.setup(STEP_Y, GPIO.OUT)
 
@@ -192,29 +197,44 @@ GPIO.setup(STEP_Y, GPIO.OUT)
 # Code test a rouler apres initialisation #
 ###########################################
 
-for i in range (50):
-    for i in range(40):
-        prochain_point()
 
+for i in range (5):
+    prochain_point()
 
-    prochaine_ligne()
+prochaine_ligne()
+for i in range(20):
+    prochain_point()
 
-    for i in range(50):
-        prochain_point()
+prochaine_ligne()
+for i in range(30):
+    prochain_point()
 
-    prochaine_ligne()
+prochaine_ligne()
+for i in range(60):
+    prochain_point()
 
-    for i in range (30):
-        prochain_point()
+prochaine_ligne()
+for i in range(100):
+    prochain_point()
 
-    prochaine_ligne()
-    prochaine_ligne()
+prochaine_ligne()
+
+for i in range(50):
+    prochain_point()
+
+prochaine_ligne()
+
+for i in range (30):
+    prochain_point()
+
+prochaine_ligne()
+prochaine_ligne()
 
 reset_buse()
 
 
 
-
+GPIO.cleanup()
 
 
 
