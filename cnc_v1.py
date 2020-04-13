@@ -11,8 +11,6 @@ def mapping_image():
     threshold = donnees.threshold
     img = donnees.image_final
     array = [[False for i in range(img.width)] for j in range(img.height)]
-    print(img.height)
-    print(img.width)
     i=0
     j=0
     for y in array:
@@ -151,7 +149,9 @@ def time_estimation ():
 def resizing (img_original, facteur):
     img_final = img_original.resize((int(img_original.width*facteur),int(img_original.height*facteur)))
     print(img_final.width,end=' pixels de large\t')
+    donnees.largeur_nouvelle = img_final.width
     print(img_final.height,end=' pixels de haut\n')
+    donnees.hauteur_nouvelle = img_final.height
     return img_final
 
 
@@ -177,7 +177,6 @@ def generate_preview(array):
             j+=1
         j=0
         i+=1
-    print("test")
     preview.save(donnees.preview_path)
 
 

@@ -1,10 +1,11 @@
 from PIL import Image
 import cnc_v1
+import os
 
 espacement = 1
-largeur_surface = 20
-hauteur_surface = 30
-image_path = "images/mendel.png"
+largeur_surface = 400
+hauteur_surface = 400
+image_path = os.path.dirname(os.path.abspath(__file__)) + "/images/mendel.png"
 
 hauteur_originale = 1
 largeur_originale = 1
@@ -12,12 +13,12 @@ largeur_originale = 1
 hauteur_nouvelle = 100
 largeur_nouvelle = 100
 
-hauteur_machine_max = 400
-largeur_machine_max = 300
+hauteur_machine_max = 500
+largeur_machine_max = 500
 
 mode = 0
 estimation = 0.0
-preview_path = "images/preview.png"
+preview_path = os.path.dirname(os.path.abspath(__file__)) + "/images/preview.png"
 
 compare = 6
 threshold = 60
@@ -87,7 +88,8 @@ def test_facteur(original,surface,espacement):
 def image_final_size():
     global image_final
     image_final = cnc_v1.resizing(image,facteur_max)
-
+    largeur_nouvelle = image_final.width
+    hauteur_nouvelle = image_final.height
 
 
 ################
