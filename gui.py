@@ -83,6 +83,7 @@ def affichage_preview():
     confirmer_mode_impression()
     donnees.generate_image_preview()
     print ("mode : " + str(donnees.mode))
+    estimation_temps()
     try:
         preview.enabled = False
     except:
@@ -134,8 +135,13 @@ def ajuster():
     ajustement.hide()
 
 def informations():
-    info = "image: " + str(os.path.basename(donnees.image_path)) + "\nlargeur(mm): " + str(donnees.largeur_nouvelle * donnees.espacement) + "\nhauteur(mm): " + str(donnees.hauteur_nouvelle * donnees.espacement) + "\nespacement(mm): " + str(donnees.espacement)
+    confirmer_mode_impression()
+    donnees.image_loading_array()
+    info = "image: " + str(os.path.basename(donnees.image_path)) + "\nlargeur(mm): " + str(donnees.largeur_nouvelle * donnees.espacement) + "\nhauteur(mm): " + str(donnees.hauteur_nouvelle * donnees.espacement) + "\nespacement(mm): " + str(donnees.espacement) + "\nestimation temps: " + donnees.generate_estimation()
     app.info("informations", info)
+
+def estimation_temps():
+    text_estimation.value = "estimation:\n" + donnees.generate_estimation()
 
 fenetre_depart()
 premiere = Window(app, layout="grid", title = "Paramètres d'impression", width = 880, height = 720, visible=True)
@@ -176,6 +182,8 @@ bouton_mode = ButtonGroup(deuxieme, grid=[1,0], options = ['Contraste', 'Contour
 bouton_preview = PushButton(deuxieme, text='generer preview', command=affichage_preview, grid = [0,1])
 
 bouton_parametre = PushButton(deuxieme, text="parametre d'impression", command=page_ajustement, grid=[2,0])
+
+text_estimation = Text(deuxieme, "estimation temps", size=15, grid=[0,3])
 
 bouton_info = PushButton(deuxieme, text="informations", command=informations, grid=[0,2])
 

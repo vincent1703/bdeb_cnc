@@ -131,15 +131,16 @@ def color_change ():
 #############
 def time_estimation ():
     time_in_seconds = 0.0
-    for i in range (donnes.image_booleen.len):
-        for j in range (donnees.image_booleen[i].len):
+    nbr_true=0
+    for i in range (len(donnees.image_booleen)):
+        for j in range (len(donnees.image_booleen[i])):
             if donnees.image_booleen[i][j] == True:
-                time_in_seconds += 0.2
+                nbr_true = nbr_true + 1
+                time_in_seconds = time_in_seconds + donnees.DELAIS_SOLENOIDE
             else :
-                time_in_seconds += 0.05
-            j+=1
-        j=0
-        i+=1
+                time_in_seconds = time_in_seconds + donnees.DELAIS_STEP
+    print ("nbr a imprimer: " + str(nbr_true))
+    print("nbr points total: " + str(len(donnees.image_booleen) * len(donnees.image_booleen[i])))
     return time_in_seconds
 
 

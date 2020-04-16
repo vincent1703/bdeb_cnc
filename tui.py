@@ -84,7 +84,15 @@ def largeur_longueur():
 #selection espacement
 def espacement():
     print("Selection de l'espacement\n")
-    donnees.espacement = validation_double("espacement(mm)", 0.2, 5.0)
+    continuer = True
+    while(continuer):
+        temp = validation_double("espacement(mm)", 0.2, 5.0)
+        if temp % 0.2 == 0:
+            continuer = False
+        else:
+            print("l'espacement doit etre divisible par 0.2")
+    donnees.espacement = temp
+
 
 #selection mode d'impression
 def mode_impression():
@@ -124,11 +132,14 @@ def generer_preview():
     donnees.update_premiere_page()
     donnees.generate_image_preview()
     print("Une nouvelle image preview a ete generee\n")
+    time = donnees.generate_estimation()
+    print("temps d'impression prevu " + time,end='\n\n')
 
 #affichage des choix actuels
 #image_path, largeur, hauteur, mode, parametre
 def affichage_actuel():
     donnees.update_premiere_page()
+    donnees.image_loading_array()
     print("Affichage des informations actuelles d'impression\n")
     print("image path: " + str(donnees.image_path))
     print("largeur(mm): " + str(donnees.largeur_nouvelle * donnees.espacement), end='    ')
@@ -143,6 +154,7 @@ def affichage_actuel():
     elif donnees.mode == 2:
         print("mode: contours(couleur)")
         print("parametre: " + str(donnees.compare))
+    print("temps d'impression prevu: " + donnees.generate_estimation())
     print("---------------------------------------")
 
 #debuter l'impression avec verification

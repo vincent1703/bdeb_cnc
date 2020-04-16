@@ -1,6 +1,7 @@
 from PIL import Image
 import cnc_v1
 import os
+import math
 
 espacement = 1
 largeur_surface = 400
@@ -37,7 +38,11 @@ def generate_image_preview():
 
 def generate_estimation():
     estimation = cnc_v1.time_estimation()
-    return estimation
+    heures = math.floor(estimation / 3600)
+    minutes = math.floor((estimation % 3600) / 60)
+    secondes = math.floor(estimation % 60)
+    temps = str(heures) + "h " + str(minutes) + "m " + str(secondes) + "s"
+    return temps
 
 def image_loading_array ():
     global image_booleen
