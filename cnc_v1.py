@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw
 import random
 import donnees
+import math
 from array import *
 
 
@@ -9,24 +10,27 @@ from array import *
 ###############
 def mapping_image():
     threshold = donnees.threshold
+    gris = math.floor(donnees.threshold * 1.6)
     img = donnees.image_final
-    array = [[False for i in range(img.width)] for j in range(img.height)]
-    i=0
-    j=0
-    for y in array:
-        for x in y:
-            r,g,b = img.getpixel((i,j))
-            if r < threshold:
-                array[j][i] = True
-            elif g < threshold:
-                array[j][i] = True
-            elif b < threshold:
-                array[j][i] = True
-            else:
-                print ("", end = '')
-            i+=1
-        i=0
-        j+=1
+    array = [[0 for j in range(img.width)] for i in range(img.height)]
+    for i in range(len(array)):
+        for j in range(len(array[i])):
+            r,g,b = img.getpixel((j,i))
+            if r < gris:
+                if r < donnees.threshold:
+                    array[i][j] = 2
+                else:
+                    array[i][j] = 1
+            elif g < gris:
+                if g < donnees.threshold:
+                    array[i][j] = 2
+                else:
+                    array[i][j] = 1
+            elif b < gris:
+                if b < donnees.threshold:
+                    array[i][j] = 2
+                else:
+                    array[i][j] = 1
     return array
 
 
@@ -35,12 +39,10 @@ def mapping_image():
 ###############
 def contour_image():
     img = donnees.image_final
-    array = [[False for i in range(img.width)] for j in range(img.height)]
-    liste_pixels = [[0 for i in range(3)] for j in range(5)]
-    i = 0
-    j = 0
-    for x in array :
-        for y in x :
+    array = [[0 for j in range(img.width)] for i in range(img.height)]
+    liste_pixels = [[0 for j in range(3)] for i in range(5)]
+    for i in range(len(array)):
+        for j in range(len(array[i])):
             try : 
                 liste_pixels[0] = img.getpixel((j,i))
                 liste_pixels[1] = img.getpixel((j+1,i))
@@ -48,27 +50,29 @@ def contour_image():
                 liste_pixels[3] = img.getpixel((j-1,i))
                 liste_pixels[4] = img.getpixel((j,i-1))
                 
-                array[i][j] = verification_contour(liste_pixels, donnees.difference)
+                array[i][j] = verification_contour(liste_pixels)
             except : 
                 print ("", end = '')
-
-            finally :
-                j +=1
-        j=0
-        i+=1
     return array
 
 
-def verification_contour (liste_pixels, difference):
+def verification_contour (liste_pixels):
     r,g,b = liste_pixels[0]
+    gris = math.floor(donnees.difference * 0.8)
     for x in liste_pixels :
-        if r - x[0] > difference :
-            return True
-        if g - x[1] > difference :
-            return True
-        if b - x[2] > difference :
-            return True
-    return False    
+        if r - x[0] > gris:
+            if r-x[0] > donnees.difference:
+                return 2
+            return 1
+        if g - x[1] > gris:
+            if g-x[1] > donnees.difference:
+                return 2
+            return 1
+        if b - x[2] > gris:
+            if b-x[2] > donnees.difference:
+                return 2
+            return 1
+    return 0
 
 
 ###############
@@ -89,21 +93,20 @@ def testHue (r,g,b):
     return 60*temp
 
 def hue_evaluate (array):
+    gris = math.floor(donnees.compare * 0.8)
     for pixel in array:
-        if (pixel - array[0]) > donnees.compare:
-            return True
-        elif (array[0] - pixel) > donnees.compare:
-            return True
-    return False
+        if abs(pixel - array[0]) > gris:
+            if (array[0] - pixel) > donnees.compare:
+                return 2
+            return 1
+    return 0
 
 def color_change ():
     img = donnees.image_final
-    array = [[False for i in range(img.width)] for j in range(img.height)]
+    array = [[0 for j in range(img.width)] for i in range(img.height)]
     liste_pixels = [0 for i in range(5)]    
-    i=0
-    j=0
-    for x  in array:
-        for y in x:
+    for i in range(len(array)):
+        for j in range(len(array[i])):
             try :
                 r,g,b =  img.getpixel((j,i))
                 liste_pixels[0] = testHue(r,g,b)
@@ -119,10 +122,6 @@ def color_change ():
                 array[i][j] = hue_evaluate(liste_pixels)
             except : 
                 print ("", end = '')
-            finally :
-                j+=1
-        j=0
-        i+=1
     return array
 
 
@@ -131,15 +130,20 @@ def color_change ():
 #############
 def time_estimation ():
     time_in_seconds = 0.0
-    nbr_true=0
+    nbr_gris = 0
+    nbr_noir = 0
     for i in range (len(donnees.image_booleen)):
         for j in range (len(donnees.image_booleen[i])):
-            if donnees.image_booleen[i][j] == True:
-                nbr_true = nbr_true + 1
-                time_in_seconds = time_in_seconds + donnees.DELAIS_SOLENOIDE
+            if donnees.image_booleen[i][j] == 1:
+                nbr_gris += 1
+                time_in_seconds += math.floor(donnees.DELAIS_SOLENOIDE * 0.5)
+            elif donnees.image_booleen[i][j] == 2:
+                nbr_noir += 1
+                time_in_seconds += donnees.DELAIS_SOLENOIDE
             else :
-                time_in_seconds = time_in_seconds + donnees.DELAIS_STEP
-    print ("nbr a imprimer: " + str(nbr_true))
+                time_in_seconds += donnees.DELAIS_STEP
+    print ("nbr points gris: " + str(nbr_gris))
+    print ("nbr points noirs: " + str(nbr_noir))
     print("nbr points total: " + str(len(donnees.image_booleen) * len(donnees.image_booleen[i])))
     return time_in_seconds
 
@@ -163,21 +167,16 @@ def generate_preview(array):
     preview = Image.new('RGB',(donnees.image_final.width, donnees.image_final.height), (255,255,255))
     preview.save(donnees.preview_path)
     pixels = preview.load()
-    i=0
-    j=0
     for i in range(len(donnees.image_booleen)):
         for j in range(len(donnees.image_booleen[i])):
             try:
-                if donnees.image_booleen[i][j] == True:
+                if donnees.image_booleen[i][j] == 2:
                     pixels[j,i] = (0,0,0)
-                else:
-                    pixels[j,i] = (255,255,255)
+                elif donnees.image_booleen[i][j] == 1:
+                    pixels[j,i] = (125,125,125)
             except:
                 print(i,end=" i\t")
                 print(j,end=" j\n")
-            j+=1
-        j=0
-        i+=1
     preview.save(donnees.preview_path)
 
 

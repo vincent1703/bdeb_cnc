@@ -29,6 +29,7 @@ nb_step_x = 0                           # Compteur du nb de steps fait de droite
 nb_step_y = 0                           # Compteur du nb de steps fait de haut en bas
 DELAIS_STEP = 0.002                     # Delais en secondes entre chaque changement de step 
 DELAIS_SOLENOIDE = 0.5                  # Delais en secondes pour lequel le solenoide est active
+#DELAIS_GRIS = ?
 
 
 def generate_image_preview():
@@ -46,7 +47,7 @@ def generate_estimation():
 
 def image_loading_array ():
     global image_booleen
-    image_booleen = [[False for i in range(largeur_nouvelle)] for j in range(hauteur_nouvelle)]
+    image_booleen = [[0 for i in range(largeur_nouvelle)] for j in range(hauteur_nouvelle)]
     if mode == 0:
         image_booleen = cnc_v1.mapping_image()
     elif mode == 1:
