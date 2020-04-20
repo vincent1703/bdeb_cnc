@@ -1,29 +1,16 @@
 from PIL import Image
 import cnc_v1
 import os
+import enums
 import math
 
-espacement = 1
 largeur_surface = 400
 hauteur_surface = 400
-image_path = os.path.dirname(os.path.abspath(__file__)) + "/images/mendel.png"
 
-hauteur_originale = 1
-largeur_originale = 1
+HAUTEUR_MAX = 500
+LARGEUR_MAX = 500
 
-hauteur_nouvelle = 100
-largeur_nouvelle = 100
-
-hauteur_machine_max = 500
-largeur_machine_max = 500
-
-mode = 0
-estimation = 0.0
-preview_path = os.path.dirname(os.path.abspath(__file__)) + "/images/preview.png"
-
-compare = 6
-threshold = 60
-difference = 34
+PREVIEW_PATH = os.path.dirname(os.path.abspath(__file__)) + "/images/preview.png"
 
 nb_step_x = 0                           # Compteur du nb de steps fait de droite a gauche
 nb_step_y = 0                           # Compteur du nb de steps fait de haut en bas
@@ -32,10 +19,22 @@ DELAIS_SOLENOIDE = 0.5                  # Delais en secondes pour lequel le sole
 #DELAIS_GRIS = ?
 
 
+parametres = {}
+parametres[enums.Param.PATH] = os.path.dirname(os.path.abspath(__file__)) + "/images/mendel.png"
+parametres[enums.Param.LARGEUR] = 100
+parametres[enums.Param.HAUTEUR] = 100
+parametres[enums.Param.ESPACEMENT] = 1
+parametres[enums.Param.MODE] = enums.Mode.CONTRASTE
+parametres[enums.Param.THRESHOLD] = 60
+parametres[enums.Param.DIFFERENCE] = 20
+parametres[enums.Param.COMPARE] = 20
+parametres[enums.Param.ESTIMATION] = "aucune estimation"
+
+
 def generate_image_preview():
     image_loading_array()
     cnc_v1.generate_preview(image_booleen)
-    #preview_image.save(preview_path)
+    #preview_image.save(PREVIEW_PATH)
 
 def generate_estimation():
     estimation = cnc_v1.time_estimation()
@@ -43,82 +42,36 @@ def generate_estimation():
     minutes = math.floor((estimation % 3600) / 60)
     secondes = math.floor(estimation % 60)
     temps = str(heures) + "h " + str(minutes) + "m " + str(secondes) + "s"
+    parametres[enums.Param.ESTIMATION] = temps
     return temps
 
 def image_loading_array ():
     global image_booleen
-    image_booleen = [[0 for i in range(largeur_nouvelle)] for j in range(hauteur_nouvelle)]
-    if mode == 0:
+    image_booleen = [[0 for i in range(parametres[enums.Param.LARGEUR])] for j in range(parametres[enums.Param.HAUTEUR])]
+    if parametres[enums.Param.MODE] == enums.Mode.CONTRASTE:
         image_booleen = cnc_v1.mapping_image()
-    elif mode == 1:
+    elif parametres[enums.Param.MODE] == enums.Mode.LUMINOSITE:
         image_booleen = cnc_v1.contour_image()
-    elif mode == 2:
+    elif parametres[enums.Param.MODE] == enums.Mode.COULEUR:
         image_booleen = cnc_v1.color_change()
     else:
         print('option non accessible')
 
 def update_premiere_page():
-    info_image()
-    #print('info_image')
-    calcul_facteur_max()
-    #print('facteur_max')
-    image_final_size()
-    #print('final_size')
-
-
-def info_image ():
-    global image
-    image = Image.open(image_path)
-    global hauteur_originale
-    hauteur_originale = image.height
-    global largeur_originale
-    largeur_originale = image.width
-
-def calcul_facteur_max():
-    global limite_hauteur
-    limite_hauteur = test_facteur(hauteur_originale, hauteur_surface, espacement)
-    global limite_largeur
-    limite_largeur = test_facteur(largeur_originale, largeur_surface, espacement)
-    
-    global facteur_max
+    image = Image.open(parametres[enums.Param.PATH])
+    limite_hauteur = test_facteur(image.height, hauteur_surface, parametres[enums.Param.ESPACEMENT])
+    limite_largeur = test_facteur(image.width, largeur_surface, parametres[enums.Param.ESPACEMENT])
     if limite_hauteur >= limite_largeur:
         facteur_max = limite_largeur
     else:
         facteur_max = limite_hauteur
+    global image_final
+    image_final = cnc_v1.resizing(image, facteur_max)
+    parametres[enums.Param.LARGEUR] = image_final.width
+    parametres[enums.Param.HAUTEUR] = image_final.height
 
 def test_facteur(original,surface,espacement):
     capacite = surface / espacement
     mult = capacite / original
     return mult
 
-def image_final_size():
-    global image_final
-    image_final = cnc_v1.resizing(image,facteur_max)
-    largeur_nouvelle = image_final.width
-    hauteur_nouvelle = image_final.height
-
-
-################
-### inutiles ###
-################
-def set_path(image_path_import):
-    image_path = image_path_import
-def set_espacement(spacing):
-    espacement = spacing
-def set_max_heigth(max_height):
-    hauteur_surface = max_height
-def set_max_width(max_width):
-    largeur_surface = max_width
-def set_img_new_height(new_height):
-    heuteur_nouvelle = new_height
-def set_img_new_width(new_width):
-    largeur_nouvelle = new_width
-
-def get_facteur_max():
-    return facteur_max
-def get_img_new_height():
-    return hauteur_nouvelle
-def get_img_new_width():
-    return largeur_nouvelle
-def get_espacement():
-    return espacement

@@ -1,6 +1,10 @@
 import cnc_v1
+import tui
+import donnees
+import enums
 
-print(cnc_v1.height)
-cnc_v1.set_height(22)
-print(cnc_v1.height)
-
+for x in donnees.parametres:
+    print (x)
+    print(x.name  + ": " + str(donnees.parametres[x]))
+#tui.ouvrir_fichier()
+#cnc_v1.load_fichier()

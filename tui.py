@@ -1,6 +1,8 @@
 #####################
 #text user interface#
 import donnees
+import cnc_v1
+import enums
 import os
 from PIL import Image
 
@@ -22,7 +24,9 @@ def menu_principal():
         print("#5 Generation de l'image preview")
         print("#6 Affichage des choix actuels")
         print("#7 Commencer l'impression")
-        print("#8 Quitter")
+        print("#8 Utiliser une sauvegarde existante")
+        print("#9 Enregistrer une sauvegarde")
+        print("#10 Quitter")
         print("------------------------------------------")
         try:
             choix = int(input("Votre choix: "))
@@ -47,6 +51,10 @@ def menu_principal():
         elif choix == 7:
             impression()
         elif choix == 8:
+            ouvrir_fichier()
+        elif choix == 9:
+            save_fichier()
+        elif choix == 10:
             continuer = quitter()
         else:
             print('Ce choix est invalide veuillez recommencer')
@@ -57,29 +65,57 @@ def image_path():
     valide = False
     prefix = os.path.dirname(os.path.abspath(__file__))
     ajout_dir = "/images/"
-    temp = ""
-    default_path = prefix + "/images/mendel.png"
+    donnees.parametres[enums.Param.PATH] = prefix + "/images/mendel.png"
     while(not valide):
         temp = input("nom de l'image et type: ")
         temp = prefix + ajout_dir + temp
         try:
             img = Image.open(temp)
-            donnees.image_path = temp
+            donnees.parametres[enums.Param.PATH] = temp
             valide = True
-            print(donnees.image_path, end='  *image choisie*\n')
+            print(donnees.parametres[enums.Param.PATH], end='  *image choisie*\n')
         except:
             print(temp)
             print("Choix d'image invalide")
             entry = input("Voulez-vous recommencer[Oui/non]? ")
             if "non" in entry.lower():
-                donnees.image_path = default_path
                 valide = True
+
+
+#ouverture de sauvegarde
+def ouvrir_fichier():
+    print("Ouverture d'un fichier de sauvegarde\n")
+    valide = False
+    prefix = os.path.dirname(os.path.abspath(__file__))
+    ajout_dir = "/sauvegardes/"
+    while(not valide):
+        print("liste de fichiers disponibles")
+        print(os.listdir(prefix + ajout_dir))
+        choix = input("\nvotre choix: ")
+        temp = prefix + ajout_dir + choix
+        try:
+            test = os.open(temp,os.O_RDONLY)
+            print("ouverture reussi")
+            cnc_v1.load_fichier(temp)
+            valide = True
+        except:
+            print("Ce choix de fichier est invalide")
+            entry = input("Voulez-vous recommencer[Oui/non]? ")
+            if "non" in entry.lower():
+                valide = True
+
+
+#sauvegarde d'un fichier
+def save_fichier():
+    print("Sauvegarde des parametres actuels\n")
+
+
 
 #selection largeur et longueur
 def largeur_longueur():
     print("Selection de la largeur et de la longueur\n")
-    donnees.largeur_surface = validation_int("largeur(mm)", 1, donnees.largeur_machine_max)
-    donnees.hauteur_surface = validation_int("hauteur(mm)", 1, donnees.hauteur_machine_max)
+    donnees.largeur_surface = validation_int("largeur(mm)", 1, donnees.LARGEUR_MAX)
+    donnees.hauteur_surface = validation_int("hauteur(mm)", 1, donnees.HAUTEUR_MAX)
 
 #selection espacement
 def espacement():
@@ -91,7 +127,7 @@ def espacement():
             continuer = False
         else:
             print("l'espacement doit etre divisible par 0.2")
-    donnees.espacement = temp
+    donnees.parametres[enums.Param.ESPACEMENT] = temp
 
 
 #selection mode d'impression
@@ -100,18 +136,18 @@ def mode_impression():
     print("choix #0 : contrastes")
     print("choix #1 : contours (lumiosite)")
     print("choix #2 : contours (couleur)")
-    donnees.mode = validation_int("mode", 0, 2)
+    donnees.parametres[enums.Param.MODE] = enums.Mode(validation_int("mode", 0, 2))
     print("")
     parametre()
 
 #selection du parametre selon mode
 def parametre():
     print("Ajustement du parametre d'impression\n")
-    if donnees.mode == 0:
+    if donnees.parametres[enums.Param.MODE] == enums.Mode.CONTRASTE:
         param_0()
-    elif donnees.mode == 1:
+    elif donnees.parametres[enums.Param.MODE] == enums.Mode.LUMINOSITE:
         param_1()
-    elif donnees.mode == 2:
+    elif donnees.parametres[enums.Param.MODE] == enums.Mode.COULEUR:
         param_2()
     else:
         print("Probleme de selection du mode")
@@ -119,13 +155,13 @@ def parametre():
 #explications pour l'ajustement des parametres
 def param_0():
     print("Dans le mode contraste, le parametre determine la valeur RGB (0-255) necessaire a une des trois couleurs pour la considerer comme foncee.\nPlus cette valeur est grande, moins il y aura de points a imprimer\nLa valeur doit se situer entre 20 et 200\n")
-    donnees.threshold = validation_int("parametre", 20, 200)
+    donnees.parametres[enums.Param.THRESHOLD] = validation_int("parametre", 20, 200)
 def param_1():
     print("Dans le mode contour de luminosite, le parametre determine la difference de valeur RGB(0-255) necessaire entre 2 pixels voisins pour considerer un changement de luminosite.\nPlus cette valeur est grande par rapport au nombre de pixels, moins il y aura de points a imprimer.\nLa valeur doit se situer entre 2 et 100\n")
-    donnees.difference = validation_int("parametre", 2, 100)
+    donnees.parametres[enums.Param.DIFFERENCE] = validation_int("parametre", 2, 100)
 def param_2():
     print("Dans le mode contour de couleur, le parametre determine la difference de valeur hue(0-360) necessaire entre 2 pixels voisins pour considerer un changement de couleur.\nPlus cette valeur est grande par rapport au nombre de pixels, moins il y aura de points a imprimer.\nLa valeur doit se trouver entre 2 et 100\n")
-    donnees.compare = validation_int("parametre", 2, 100)
+    donnees.parametres[enums.Param.COMPARE] = validation_int("parametre", 2, 100)
 
 #generer preview
 def generer_preview():
@@ -140,22 +176,9 @@ def generer_preview():
 def affichage_actuel():
     donnees.update_premiere_page()
     donnees.image_loading_array()
-    print("Affichage des informations actuelles d'impression\n")
-    print("image path: " + str(donnees.image_path))
-    print("largeur(mm): " + str(donnees.largeur_nouvelle * donnees.espacement), end='    ')
-    print("hauteur(mm): " + str(donnees.hauteur_nouvelle * donnees.espacement))
-    print("espacement(mm): " + str(donnees.espacement))
-    if donnees.mode == 0:
-        print("mode: contraste")
-        print("parametre: " + str(donnees.threshold))
-    elif donnees.mode == 1:
-        print("mode: contours(luminosite)")
-        print("parametre: " + str(donnees.difference))
-    elif donnees.mode == 2:
-        print("mode: contours(couleur)")
-        print("parametre: " + str(donnees.compare))
-    print("temps d'impression prevu: " + donnees.generate_estimation())
-    print("---------------------------------------")
+    for x in donnees.parametres:
+        print(x.name + ": " + str(donnees.parametres[x]))
+
 
 #debuter l'impression avec verification
 def impression():
