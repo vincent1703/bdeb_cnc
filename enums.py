@@ -9,8 +9,10 @@ class Param (Enum):
     DIFFERENCE = 6
     COMPARE = 7
     ESTIMATION = 8
+    PREVIEW = 9
 
 class Mode (Enum):
     CONTRASTE = 0
     LUMINOSITE = 1
     COULEUR = 2
+    AUTO = 3

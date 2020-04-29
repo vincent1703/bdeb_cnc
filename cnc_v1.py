@@ -2,6 +2,7 @@ from PIL import Image, ImageDraw
 import random
 import donnees
 import enums
+import sys
 import math
 import os
 from array import *
@@ -10,40 +11,36 @@ from array import *
 ### CHOIX 0 ###
 ###############
 def mapping_image():
-    noir = donnees.parametres[enums.Param.THRESHOLD]
+    noir = int(donnees.parametres[enums.Param.THRESHOLD])
     gris = math.floor(noir * 1.6)
     img = donnees.image_final
-    array = [[0 for j in range(img.width)] for i in range(img.height)]
-    for i in range(len(array)):
-        for j in range(len(array[i])):
+    preview = preparation_preview()
+    pixels = preview.load()
+    for i in range(donnees.parametres[enums.Param.HAUTEUR]):
+        for j in range(donnees.parametres[enums.Param.LARGEUR]):
             r,g,b = img.getpixel((j,i))
-            if r < gris:
-                if r < noir:
-                    array[i][j] = 2
+            if r < gris or g < gris or b < gris:
+                if r < noir or g < noir or b < noir:
+                    pixels[j,i] = (0,0,0)
                 else:
-                    array[i][j] = 1
-            elif g < gris:
-                if g < noir:
-                    array[i][j] = 2
-                else:
-                    array[i][j] = 1
-            elif b < gris:
-                if b < noir:
-                    array[i][j] = 2
-                else:
-                    array[i][j] = 1
-    return array
+                    pixels[j,i] = (60,60,60)
+    preview.save(donnees.parametres[enums.Param.PREVIEW])
 
+def preparation_preview():
+    preview = Image.new('RGB', (donnees.parametres[enums.Param.LARGEUR], donnees.parametres[enums.Param.HAUTEUR]), (255,255,255))
+    preview.save(donnees.parametres[enums.Param.PREVIEW])
+    return preview
 
 ###############
 ### CHOIX 1 ###
 ###############
 def contour_image():
     img = donnees.image_final
-    array = [[0 for j in range(img.width)] for i in range(img.height)]
+    preview = preparation_preview()
+    pixels = preview.load()
     liste_pixels = [[0 for j in range(3)] for i in range(5)]
-    for i in range(len(array)):
-        for j in range(len(array[i])):
+    for i in range(donnees.parametres[enums.Param.HAUTEUR]):
+        for j in range(donnees.parametres[enums.Param.LARGEUR]):
             try : 
                 liste_pixels[0] = img.getpixel((j,i))
                 liste_pixels[1] = img.getpixel((j+1,i))
@@ -51,10 +48,10 @@ def contour_image():
                 liste_pixels[3] = img.getpixel((j-1,i))
                 liste_pixels[4] = img.getpixel((j,i-1))
                 
-                array[i][j] = verification_contour(liste_pixels)
+                pixels[j,i] = verification_contour(liste_pixels)
             except : 
                 print ("", end = '')
-    return array
+    preview.save(donnees.parametres[enums.Param.PREVIEW])
 
 
 def verification_contour (liste_pixels):
@@ -62,19 +59,11 @@ def verification_contour (liste_pixels):
     noir = donnees.parametres[enums.Param.DIFFERENCE]
     gris = math.floor(noir * 0.8)
     for x in liste_pixels :
-        if r - x[0] > gris:
-            if r-x[0] > noir:
-                return 2
-            return 1
-        if g - x[1] > gris:
-            if g-x[1] > noir:
-                return 2
-            return 1
-        if b - x[2] > gris:
-            if b-x[2] > noir:
-                return 2
-            return 1
-    return 0
+        if r-x[0] > gris or g-x[1] > gris or b-x[2] > gris:
+            if r-x[0] > noir or g-x[1] > noir or b-x[2] > noir:
+                return (0,0,0)
+            return (60,60,60)
+    return (255,255,255)
 
 
 ###############
@@ -100,16 +89,17 @@ def hue_evaluate (array):
     for pixel in array:
         if abs(pixel - array[0]) > gris:
             if (array[0] - pixel) > noir:
-                return 2
-            return 1
-    return 0
+                return (0,0,0)
+            return (60,60,60)
+    return (255,255,255)
 
 def color_change ():
     img = donnees.image_final
-    array = [[0 for j in range(img.width)] for i in range(img.height)]
+    preview = preparation_preview()
+    pixels = preview.load()
     liste_pixels = [0 for i in range(5)]    
-    for i in range(len(array)):
-        for j in range(len(array[i])):
+    for i in range(donnees.parametres[enums.Param.HAUTEUR]):
+        for j in range(donnees.parametres[enums.Param.LARGEUR]):
             try :
                 r,g,b =  img.getpixel((j,i))
                 liste_pixels[0] = testHue(r,g,b)
@@ -122,32 +112,45 @@ def color_change ():
                 r,g,b =  img.getpixel((j,i-1))
                 liste_pixels[4] = testHue(r,g,b)
                 
-                array[i][j] = hue_evaluate(liste_pixels)
+                pixels[j,i] = hue_evaluate(liste_pixels)
             except : 
                 print ("", end = '')
-    return array
+    preview.save(donnees.parametres[enums.Param.PREVIEW])
+
+
+###############
+### CHOIX 3 ###
+###############
+def gestion_auto():
+    img = donnees.image_final.convert('L')
+    noir = donnees.parametres[enums.Param.THRESHOLD]
+    gris = noir * 1.6
+    preview = preparation_preview()
+    pixels = preview.load()
+    for i in range (donnees.parametres[enums.Param.HAUTEUR]):
+        for j in range (donnees.parametres[enums.Param.LARGEUR]):
+            l = img.getpixel((j,i))
+            if l < gris:
+                if l < noir:
+                    pixels[j,i] = (0,0,0)
+                else:
+                    pixels[j,i] = (60,60,60)
+    preview.save(donnees.parametres[enums.Param.PREVIEW])
 
 
 #########################
 ### OUVERTURE FICHIER ###
 #########################
 def load_fichier(path):
-    #path = os.path.dirname(os.path.abspath(__file__)) + "/sauvegardes/test1.save"
-    fichier = os.open(path, os.O_RDONLY)
-    print("ouvrir")
-    contenu = os.read(fichier, os.path.getsize(fichier)) 
-    print("lecture")
-    separation = contenu.splitlines(False)
+    fichier = open(path, "r")
+    contenu = fichier.read()
+    separation = contenu.splitlines()
     print("nom du fichier: " + os.path.basename(path))
-    print (separation)
-
-
-
-
-def lecture_info(liste):
-    pass
-    
-    
+    i=0
+    for element in separation:
+        donnees.parametres[enums.Param(i)] = element
+        i+=1
+    fichier.close()
 
 ###########################
 ### ENREGISTRER FICHIER ###
@@ -155,17 +158,9 @@ def lecture_info(liste):
 def save_fichier(name):
     path = os.path.dirname(os.path.abspath(__file__)) + "/sauvegardes/" + name
     fichier = open(path, "w")
-    #image_path
-    #largeur
-    #hauteur
-    #espacement
-    #mode
-    #compare
-    #threshold
-    #difference
-    #estimation
+    for info in enums.Param:
+        fichier.write(str(donnees.parametres[info]) + "\n")
     fichier.close()
-
 
 #############
 ### TEMPS ###
@@ -174,19 +169,20 @@ def time_estimation ():
     time_in_seconds = 0.0
     nbr_gris = 0
     nbr_noir = 0
-    for i in range (len(donnees.image_booleen)):
-        for j in range (len(donnees.image_booleen[i])):
-            if donnees.image_booleen[i][j] == 1:
+    image = Image.open(donnees.parametres[enums.Param.PREVIEW])
+    for i in range (donnees.parametres[enums.Param.HAUTEUR]):
+        for j in range (donnees.parametres[enums.Param.LARGEUR]):
+            if image.getpixel((j,i)) == (60,60,60):
                 nbr_gris += 1
                 time_in_seconds += math.floor(donnees.DELAIS_SOLENOIDE * 0.5)
-            elif donnees.image_booleen[i][j] == 2:
+            elif image.getpixel((j,i)) == (255,255,255):
                 nbr_noir += 1
                 time_in_seconds += donnees.DELAIS_SOLENOIDE
             else :
                 time_in_seconds += donnees.DELAIS_STEP
     print ("nbr points gris: " + str(nbr_gris))
     print ("nbr points noirs: " + str(nbr_noir))
-    print("nbr points total: " + str(len(donnees.image_booleen) * len(donnees.image_booleen[i])))
+    print("nbr points total: "+ str(donnees.parametres[enums.Param.LARGEUR] * donnees.parametres[enums.Param.HAUTEUR]))
     return time_in_seconds
 
 
@@ -195,25 +191,4 @@ def time_estimation ():
 ##############
 def resizing (img_original, facteur):
     return  img_original.resize((int(img_original.width*facteur),int(img_original.height*facteur)))
-
-
-#####################
-### IMAGE PREVIEW ###
-#####################
-def generate_preview(array):
-    preview = Image.new('RGB',(donnees.parametres[enums.Param.LARGEUR], donnees.parametres[enums.Param.HAUTEUR]), (255,255,255))
-    preview.save(donnees.PREVIEW_PATH)
-    pixels = preview.load()
-    for i in range(len(donnees.image_booleen)):
-        for j in range(len(donnees.image_booleen[i])):
-            try:
-                if donnees.image_booleen[i][j] == 2:
-                    pixels[j,i] = (0,0,0)
-                elif donnees.image_booleen[i][j] == 1:
-                    pixels[j,i] = (125,125,125)
-            except:
-                print(i,end=" i\t")
-                print(j,end=" j\n")
-    preview.save(donnees.PREVIEW_PATH)
-
 

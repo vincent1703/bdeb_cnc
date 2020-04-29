@@ -29,12 +29,7 @@ parametres[enums.Param.THRESHOLD] = 60
 parametres[enums.Param.DIFFERENCE] = 20
 parametres[enums.Param.COMPARE] = 20
 parametres[enums.Param.ESTIMATION] = "aucune estimation"
-
-
-def generate_image_preview():
-    image_loading_array()
-    cnc_v1.generate_preview(image_booleen)
-    #preview_image.save(PREVIEW_PATH)
+parametres[enums.Param.PREVIEW] = os.path.dirname(os.path.abspath(__file__)) + "/images/preview.png"
 
 def generate_estimation():
     estimation = cnc_v1.time_estimation()
@@ -43,24 +38,25 @@ def generate_estimation():
     secondes = math.floor(estimation % 60)
     temps = str(heures) + "h " + str(minutes) + "m " + str(secondes) + "s"
     parametres[enums.Param.ESTIMATION] = temps
-    return temps
 
 def image_loading_array ():
-    global image_booleen
-    image_booleen = [[0 for i in range(parametres[enums.Param.LARGEUR])] for j in range(parametres[enums.Param.HAUTEUR])]
     if parametres[enums.Param.MODE] == enums.Mode.CONTRASTE:
-        image_booleen = cnc_v1.mapping_image()
+        cnc_v1.mapping_image()
     elif parametres[enums.Param.MODE] == enums.Mode.LUMINOSITE:
-        image_booleen = cnc_v1.contour_image()
+        cnc_v1.contour_image()
     elif parametres[enums.Param.MODE] == enums.Mode.COULEUR:
-        image_booleen = cnc_v1.color_change()
+        cnc_v1.color_change()
+    elif parametres[enums.Param.MODE] == enums.Mode.AUTO:
+        cnc_v1.gestion_auto()
     else:
-        print('option non accessible')
+        option = str(parametres[enums.Param.MODE]).replace("Mode.", "")
+        parametres[enums.Param.MODE] = enums.Mode[option]
+        image_loading_array()
 
 def update_premiere_page():
     image = Image.open(parametres[enums.Param.PATH])
-    limite_hauteur = test_facteur(image.height, hauteur_surface, parametres[enums.Param.ESPACEMENT])
-    limite_largeur = test_facteur(image.width, largeur_surface, parametres[enums.Param.ESPACEMENT])
+    limite_hauteur = test_facteur(image.height, hauteur_surface, float(parametres[enums.Param.ESPACEMENT]))
+    limite_largeur = test_facteur(image.width, largeur_surface, float(parametres[enums.Param.ESPACEMENT]))
     if limite_hauteur >= limite_largeur:
         facteur_max = limite_largeur
     else:

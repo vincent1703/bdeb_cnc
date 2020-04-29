@@ -11,7 +11,7 @@ from PIL import Image
 def menu_principal():
     continuer = True
     while(continuer):
-        choix = 10
+        choix = -1
         #message de choix d'option
         print("\n\tMENU PRINCIPAL")
         print("choisissez une option parmis les suivantes")
@@ -108,26 +108,21 @@ def ouvrir_fichier():
 #sauvegarde d'un fichier
 def save_fichier():
     print("Sauvegarde des parametres actuels\n")
+    cnc_v1.save_fichier("automatique")
+    print("Sauvegarde effectuee avec succes")
 
 
 
 #selection largeur et longueur
 def largeur_longueur():
     print("Selection de la largeur et de la longueur\n")
-    donnees.largeur_surface = validation_int("largeur(mm)", 1, donnees.LARGEUR_MAX)
-    donnees.hauteur_surface = validation_int("hauteur(mm)", 1, donnees.HAUTEUR_MAX)
+    donnees.largeur_surface = validation("largeur(mm)", 1, donnees.LARGEUR_MAX, 1)
+    donnees.hauteur_surface = validation("hauteur(mm)", 1, donnees.HAUTEUR_MAX, 1)
 
 #selection espacement
 def espacement():
     print("Selection de l'espacement\n")
-    continuer = True
-    while(continuer):
-        temp = validation_double("espacement(mm)", 0.2, 5.0)
-        if temp % 0.2 == 0:
-            continuer = False
-        else:
-            print("l'espacement doit etre divisible par 0.2")
-    donnees.parametres[enums.Param.ESPACEMENT] = temp
+    donnees.parametres[enums.Param.ESPACEMENT] = validation("espacement(mm)", 0.2, 5.0, 0.2)
 
 
 #selection mode d'impression
@@ -136,7 +131,7 @@ def mode_impression():
     print("choix #0 : contrastes")
     print("choix #1 : contours (lumiosite)")
     print("choix #2 : contours (couleur)")
-    donnees.parametres[enums.Param.MODE] = enums.Mode(validation_int("mode", 0, 2))
+    donnees.parametres[enums.Param.MODE] = enums.Mode(validation("mode", 0, 3, 1))
     print("")
     parametre()
 
@@ -149,33 +144,36 @@ def parametre():
         param_1()
     elif donnees.parametres[enums.Param.MODE] == enums.Mode.COULEUR:
         param_2()
+    elif donnees.parametres[enums.Param.MODE] == enums.Mode.AUTO:
+        param_0()
     else:
         print("Probleme de selection du mode")
 
 #explications pour l'ajustement des parametres
 def param_0():
     print("Dans le mode contraste, le parametre determine la valeur RGB (0-255) necessaire a une des trois couleurs pour la considerer comme foncee.\nPlus cette valeur est grande, moins il y aura de points a imprimer\nLa valeur doit se situer entre 20 et 200\n")
-    donnees.parametres[enums.Param.THRESHOLD] = validation_int("parametre", 20, 200)
+    donnees.parametres[enums.Param.THRESHOLD] = validation("parametre", 20, 200, 1)
 def param_1():
     print("Dans le mode contour de luminosite, le parametre determine la difference de valeur RGB(0-255) necessaire entre 2 pixels voisins pour considerer un changement de luminosite.\nPlus cette valeur est grande par rapport au nombre de pixels, moins il y aura de points a imprimer.\nLa valeur doit se situer entre 2 et 100\n")
-    donnees.parametres[enums.Param.DIFFERENCE] = validation_int("parametre", 2, 100)
+    donnees.parametres[enums.Param.DIFFERENCE] = validation("parametre", 2, 100, 1)
 def param_2():
     print("Dans le mode contour de couleur, le parametre determine la difference de valeur hue(0-360) necessaire entre 2 pixels voisins pour considerer un changement de couleur.\nPlus cette valeur est grande par rapport au nombre de pixels, moins il y aura de points a imprimer.\nLa valeur doit se trouver entre 2 et 100\n")
-    donnees.parametres[enums.Param.COMPARE] = validation_int("parametre", 2, 100)
+    donnees.parametres[enums.Param.COMPARE] = validation("parametre", 2, 100, 1)
+
+def actualiser_infos():
+    donnees.update_premiere_page()
+    donnees.image_loading_array()
+    donnees.generate_estimation()
 
 #generer preview
 def generer_preview():
-    donnees.update_premiere_page()
-    donnees.generate_image_preview()
+    actualiser_infos()
     print("Une nouvelle image preview a ete generee\n")
-    time = donnees.generate_estimation()
-    print("temps d'impression prevu " + time,end='\n\n')
+    print("temps d'impression prevu " + donnees.parametres[enums.Param.ESTIMATION],end='\n\n')
 
 #affichage des choix actuels
-#image_path, largeur, hauteur, mode, parametre
 def affichage_actuel():
-    donnees.update_premiere_page()
-    donnees.image_loading_array()
+    actualiser_infos()
     for x in donnees.parametres:
         print(x.name + ": " + str(donnees.parametres[x]))
 
@@ -205,34 +203,20 @@ def accueil():
     menu_principal()
 
 
-###################
-### VALIDATIONS ###
-###################
-def validation_int(param_string, minimum, maximum):
-    valide = False
-    while(not valide):
-        try:
-            temp = input(param_string + ": ")
-            valeur = int(temp)
-            if valeur >= minimum:
-                if valeur <= maximum:
-                    valide = True
-                else:
-                    print("Veuillez entrer un chiffre plus petit ou egal a " + str(maximum))
-            else:
-                print("Veuillez entrer un chiffre plus grand ou egal a " + str(minimum))
-        except:
-            print("Invalide veuillez entrer un chiffre entre " + str(minimum) + " et " + str(maximum))
-    return valeur
-
-def validation_double(param_string, minimum,  maximum):
+##################
+### VALIDATION ###
+##################
+def validation(param_string, minimum,  maximum, modulo):
     valide = False
     while(not valide):
         try:
             valeur = float(input(param_string + ": "))
             if valeur >= minimum:
                 if valeur <= maximum:
-                    valide = True
+                    if (10*valeur) % (10*modulo) == 0:
+                        valide = True
+                    else:
+                        print("Veuillez entrer un chiffre divisible par " + str(modulo))
                 else:
                     print("Veuillez entrer un chiffre plus petit ou egal a " + str(maximum))
             else:
