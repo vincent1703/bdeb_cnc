@@ -57,7 +57,7 @@ def menu_principal():
         elif choix == 10:
             continuer = quitter()
         else:
-            print('Ce choix est invalide veuillez recommencer')
+            print('Ce choix est invalide veuillez recommencer\n')
 
 #selection image_path
 def image_path():
@@ -65,22 +65,18 @@ def image_path():
     valide = False
     prefix = os.path.dirname(os.path.abspath(__file__))
     ajout_dir = "/images/"
-    donnees.parametres[enums.Param.PATH] = prefix + "/images/mendel.png"
+    donnees.parametres[enums.Param.PATH] = prefix + ajout_dir + "mendel.png"
     while(not valide):
-        temp = input("nom de l'image et type: ")
-        temp = prefix + ajout_dir + temp
+        texte = str("liste image:\n" + str(os.listdir(prefix + ajout_dir)) + "\nVotre choix: ")
+        temp = validation_texte(texte)
+        path = prefix + ajout_dir + temp
         try:
-            img = Image.open(temp)
-            donnees.parametres[enums.Param.PATH] = temp
+            img = Image.open(path)
+            donnees.parametres[enums.Param.PATH] = path
             valide = True
             print(donnees.parametres[enums.Param.PATH], end='  *image choisie*\n')
         except:
-            print(temp)
-            print("Choix d'image invalide")
-            entry = input("Voulez-vous recommencer[Oui/non]? ")
-            if "non" in entry.lower():
-                valide = True
-
+            valide = not validation_bool("Image invalide. Voulez-vous recommencer?[Oui/non]")
 
 #ouverture de sauvegarde
 def ouvrir_fichier():
@@ -89,29 +85,23 @@ def ouvrir_fichier():
     prefix = os.path.dirname(os.path.abspath(__file__))
     ajout_dir = "/sauvegardes/"
     while(not valide):
-        print("liste de fichiers disponibles")
-        print(os.listdir(prefix + ajout_dir))
-        choix = input("\nvotre choix: ")
-        temp = prefix + ajout_dir + choix
+        texte = str("liste fichier:\n" + str(os.listdir(prefix + ajout_dir)) + "\nVotre choix: ")
+        choix = validation_texte(texte)
+        fichier = prefix + ajout_dir + choix
         try:
-            test = os.open(temp,os.O_RDONLY)
-            print("ouverture reussi")
-            cnc_v1.load_fichier(temp)
+            test = os.open(fichier,os.O_RDONLY)
+            cnc_v1.load_fichier(fichier)
             valide = True
         except:
-            print("Ce choix de fichier est invalide")
-            entry = input("Voulez-vous recommencer[Oui/non]? ")
-            if "non" in entry.lower():
-                valide = True
+            valide = not validation_bool("Fichier invalide. Voulez-vous recommencer?[Oui/non]")
 
 
 #sauvegarde d'un fichier
 def save_fichier():
+    valide = False
     print("Sauvegarde des parametres actuels\n")
-    cnc_v1.save_fichier("automatique")
-    print("Sauvegarde effectuee avec succes")
-
-
+    nom_fichier = validation_texte("Entrez le nom de la sauvegarde: ")
+    cnc_v1.save_fichier(nom_fichier)
 
 #selection largeur et longueur
 def largeur_longueur():
@@ -124,15 +114,11 @@ def espacement():
     print("Selection de l'espacement\n")
     donnees.parametres[enums.Param.ESPACEMENT] = validation("espacement(mm)", 0.2, 5.0, 0.2)
 
-
 #selection mode d'impression
 def mode_impression():
     print("Selection du mode d'impression\n")
-    print("choix #0 : contrastes")
-    print("choix #1 : contours (lumiosite)")
-    print("choix #2 : contours (couleur)")
-    donnees.parametres[enums.Param.MODE] = enums.Mode(validation("mode", 0, 3, 1))
-    print("")
+    texte = str("choix #0 : contrastes\nchoix #1 : contours(luminosite)\nchoix #2 : contours(couleur)\nchoix #3 : Automatique(contrastes)\nmode")
+    donnees.parametres[enums.Param.MODE] = enums.Mode(validation(texte, 0, 3, 1))
     parametre()
 
 #selection du parametre selon mode
@@ -177,24 +163,17 @@ def affichage_actuel():
     for x in donnees.parametres:
         print(x.name + ": " + str(donnees.parametres[x]))
 
-
 #debuter l'impression avec verification
 def impression():
-    print ("Voici les informations de l'impression: ")
     affichage_actuel()
-    reponse = input("Souhaitez-vous imprimer cette image[Oui/non]?")
-    if "non" in reponse.lower():
-        print("impression annulee")
-    else:
+    if validation_bool("Souhaitez-vous imprimer cette image[Oui/non]?"):
+        cnc_v1.save_fichier("last_print")
         print("debut de l'impression")
 
 #verification pour quitter
 def quitter():
-    continuer = False
-    entry = input("Souhaitez-vous quitter[Oui/non]?")
-    if "non" in entry.lower():
-        continuer = True
-    return continuer
+    return not validation_bool("Souhaitez-vous quitter[Oui/non]?")
+
 #message d'accueil
 def accueil():
     print("\n#################################################")
@@ -224,6 +203,22 @@ def validation(param_string, minimum,  maximum, modulo):
         except:
             print("Invalide veuillez entrer un chiffre entre " + str(minimum) + " et " + str(maximum))
     return valeur
+
+
+def validation_texte(texte):
+    valide = False
+    while(not valide):
+        entry = input(texte)
+        valide = validation_bool(str("Confirmez-vous " + entry + "?[Oui/non]"))
+    return entry
+
+
+def validation_bool(texte):
+    entry = input(texte)
+    if "non" in entry.lower():
+        return False
+    return True
+
 
 #fin des methodes
 ######################
