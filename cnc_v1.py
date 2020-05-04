@@ -156,7 +156,7 @@ def load_fichier(path):
 ### ENREGISTRER FICHIER ###
 ###########################
 def save_fichier(name):
-    path = os.path.dirname(os.path.abspath(__file__)) + "/sauvegardes/" + name
+    path = os.path.dirname(os.path.abspath(__file__)) + "/sauvegardes/" + name + ".save"
     fichier = open(path, "w")
     for info in enums.Param:
         fichier.write(str(donnees.parametres[info]) + "\n")
@@ -175,7 +175,7 @@ def time_estimation ():
             if image.getpixel((j,i)) == (60,60,60):
                 nbr_gris += 1
                 time_in_seconds += math.floor(donnees.DELAIS_SOLENOIDE * 0.5)
-            elif image.getpixel((j,i)) == (255,255,255):
+            elif image.getpixel((j,i)) == (0,0,0):
                 nbr_noir += 1
                 time_in_seconds += donnees.DELAIS_SOLENOIDE
             else :
