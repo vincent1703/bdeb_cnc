@@ -7,7 +7,7 @@ import math
 largeur_surface = 400
 hauteur_surface = 400
 
-espacement=1
+espacement=0.4
 
 HAUTEUR_MAX = 500
 LARGEUR_MAX = 500

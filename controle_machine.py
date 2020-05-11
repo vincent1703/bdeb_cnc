@@ -26,10 +26,10 @@ def impression():
     img = Image.open(donnees.PREVIEW_PATH)
     
    
-    for i in range(img.width):
-        for j in range(img.height):
+    for i in range(img.height):
+        for j in range(img.width):
             rgb_img = img.convert('RGB')
-            r, g, b = rgb_img.getpixel((i, j))
+            r, g, b = rgb_img.getpixel((j, i))
             
             if r<200:
                 point()
@@ -71,7 +71,6 @@ def bas():
     sleep(DELAIS_STEP_Y)
 
 
-
 # Fait avancer la buse au point suivant (à droite) 
 def prochain_point():
    
@@ -92,6 +91,7 @@ def prochain_point():
 
 # Fait passer la buse à la ligne suivante (hauteur) et la remet à gauche (début de la ligne)
 def prochaine_ligne():
+    GPIO.output(EN_Y, 0)
     for i in range(donnees.nb_step_x):
         GPIO.output(DIR_X, SH)
         GPIO.output(STEP_X, 1)
@@ -117,7 +117,7 @@ def prochaine_ligne():
     print('buse tassee en bas dun point')
     print(donnees.nb_step_x)
     print(donnees.nb_step_y)
-
+    GPIO.output(EN_Y, 1)
 # Remet la buse dans le coin en haut à gauche
 
 def point_on():
@@ -128,11 +128,12 @@ def point_off():
 
 def point():
     GPIO.output(TRS, 1)
-    sleep(0.1)
+    sleep(DELAIS_SOLENOIDE/2)
     GPIO.output(TRS, 0)
-    sleep(0.1)
+    sleep(DELAIS_SOLENOIDE/2)
 
 def man_1():
+    GPIO.output(EN_Y, 0)
     while(True):
         if GPIO.input(MAN_DROITE) == 1:
             droite()
@@ -156,13 +157,14 @@ def man_2():
 
 
 def reset_buse():
+    GPIO.output(EN_Y, 0)
     for i in range(donnees.nb_step_x):
         GPIO.output(DIR_X, SH)
         GPIO.output(STEP_X, 1)
-        sleep(DELAIS_STEP)
+        sleep(DELAIS_STEP_X)
 
         GPIO.output(STEP_X, 0)
-        sleep(DELAIS_STEP)
+        sleep(DELAIS_STEP_X)
         donnees.nb_step_x -= 1 
         print('buse tassee a gauche dun step')
     print('buse tassee a gauche dun point')
@@ -172,16 +174,16 @@ def reset_buse():
     for i in range(donnees.nb_step_y):
         GPIO.output(DIR_Y, SAH)
         GPIO.output(STEP_Y, 1)
-        sleep(DELAIS_STEP)
+        sleep(DELAIS_STEP_Y)
 
         GPIO.output(STEP_Y, 0)
-        sleep(DELAIS_STEP)
+        sleep(DELAIS_STEP_Y)
         donnees.nb_step_y -= 1
         print('buse tassee en haut dun step')
     print('buse tassee en haut dun point')
     print(donnees.nb_step_x)
     print(donnees.nb_step_y)
-
+    GPIO.output(EN_Y, 1)
 
 
 
@@ -193,9 +195,9 @@ STEP_DISTANCE = 0.2     # Valeur en mm qui détermine la distance que doit parco
                             # 1 step = 40mm(circonference) / 200 step(por 1 tour) = 0.2 mm / step
                             # 1 step = 40mm / 200 step = 0.2 mm / step
 DELAIS_STEP_Y = 0.002     # Delais entre chaque step, en secondes, determine la vitesse
-DELAIS_STEP_X = 0.0010    # Delais entre chaque step, en secondes, determine la vitesse
+DELAIS_STEP_X = 0.0007    # Delais entre chaque step, en secondes, determine la vitesse
 SPR = 200               # Nombre de Step Par Rotation
-DELAIS_SOLENOIDE = 0.5  # Delais que doit passer le relais du solenoide en position activee pour que l'impression se fasse. ***MODIFIER DONNEES DIFFERENT MODES ?
+DELAIS_SOLENOIDE = 0.05  # Delais que doit passer le relais du solenoide en position activee pour que l'impression se fasse. ***MODIFIER DONNEES DIFFERENT MODES ?
 
 #######################
 # Variables de classe #
@@ -285,9 +287,8 @@ GPIO.setup(MAN_POINT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 try:
     
-
     GPIO.output(TRS, 0)
-    
+        
     impression()
 
     reset_buse()
