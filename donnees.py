@@ -7,10 +7,12 @@ import math
 largeur_surface = 400
 hauteur_surface = 400
 
+espacement=1
+
 HAUTEUR_MAX = 500
 LARGEUR_MAX = 500
 
-PREVIEW_PATH = os.path.dirname(os.path.abspath(__file__)) + "/images/preview.png"
+PREVIEW_PATH = os.path.dirname(os.path.abspath(__file__)) + "/images/dauphin.jpeg"
 
 nb_step_x = 0                           # Compteur du nb de steps fait de droite a gauche
 nb_step_y = 0                           # Compteur du nb de steps fait de haut en bas
