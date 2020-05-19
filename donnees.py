@@ -4,15 +4,16 @@ import os
 import enums
 import math
 
-largeur_surface = 400
-hauteur_surface = 400
 
-espacement=0.4
+largeur_surface = 400                   #largeur choisie par l'utilisateur en mm
+hauteur_surface = 400                   #hauteur choisie par l'utilisateur en mm
 
-HAUTEUR_MAX = 500
-LARGEUR_MAX = 500
+espacement=0.4                          #espacement entre chaque points en mm
 
-PREVIEW_PATH = os.path.dirname(os.path.abspath(__file__)) + "/images/dauphin.jpeg"
+HAUTEUR_MAX = 500                       #hauteur maximale d'impression en mm
+LARGEUR_MAX = 500                       #largeur maximale d'impression en mm 
+
+PREVIEW_PATH = os.path.dirname(os.path.abspath(__file__)) + "/images/dauphin.jpeg"  #chemin initial
 
 nb_step_x = 0                           # Compteur du nb de steps fait de droite a gauche
 nb_step_y = 0                           # Compteur du nb de steps fait de haut en bas
@@ -21,6 +22,7 @@ DELAIS_SOLENOIDE = 0.5                  # Delais en secondes pour lequel le sole
 #DELAIS_GRIS = ?
 
 
+#dictionnaire contenant les informations de l'impression
 parametres = {}
 parametres[enums.Param.PATH] = os.path.dirname(os.path.abspath(__file__)) + "/images/mendel.png"
 parametres[enums.Param.LARGEUR] = 100
@@ -33,6 +35,7 @@ parametres[enums.Param.COMPARE] = 20
 parametres[enums.Param.ESTIMATION] = "aucune estimation"
 parametres[enums.Param.PREVIEW] = os.path.dirname(os.path.abspath(__file__)) + "/images/preview.png"
 
+#prend l'estiamtion en secondes dans cnc_v1 et le converti en heure et minutes
 def generate_estimation():
     estimation = cnc_v1.time_estimation()
     heures = math.floor(estimation / 3600)
@@ -41,6 +44,8 @@ def generate_estimation():
     temps = str(heures) + "h " + str(minutes) + "m " + str(secondes) + "s"
     parametres[enums.Param.ESTIMATION] = temps
 
+#appele la methode de traitement d'image selon le mode choisi
+#si le nom de choix est invalide il le corrige (pour les sauvegardes)
 def image_loading_array ():
     if parametres[enums.Param.MODE] == enums.Mode.CONTRASTE:
         cnc_v1.mapping_image()
@@ -55,6 +60,7 @@ def image_loading_array ():
         parametres[enums.Param.MODE] = enums.Mode[option]
         image_loading_array()
 
+#actualise les informations sur l'image choisie et ses dimensions
 def update_premiere_page():
     image = Image.open(parametres[enums.Param.PATH])
     limite_hauteur = test_facteur(image.height, hauteur_surface, float(parametres[enums.Param.ESPACEMENT]))
@@ -68,6 +74,8 @@ def update_premiere_page():
     parametres[enums.Param.LARGEUR] = image_final.width
     parametres[enums.Param.HAUTEUR] = image_final.height
 
+#trouve le facteur limitant dans le changement de grandeur de l'image originale
+#return : retourne le facteur de grossissement calcule
 def test_facteur(original,surface,espacement):
     capacite = surface / espacement
     mult = capacite / original

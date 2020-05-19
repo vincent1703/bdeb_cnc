@@ -10,6 +10,9 @@ from array import *
 ###############
 ### CHOIX 0 ###
 ###############
+#prend une image et met un point noir ou gris dans une image de meme dimension
+#choisi si un point est gris noir ou blanc selon le rgb de chque pixel
+#une image preview est generee et sauvegardee
 def mapping_image():
     noir = int(donnees.parametres[enums.Param.THRESHOLD])
     gris = math.floor(noir * 1.6)
@@ -26,6 +29,9 @@ def mapping_image():
                     pixels[j,i] = (60,60,60)
     preview.save(donnees.parametres[enums.Param.PREVIEW])
 
+
+#prepare le gabarit du preview utilise dans les autres methodes
+#retourne une image blanche de la bonne taille
 def preparation_preview():
     preview = Image.new('RGB', (donnees.parametres[enums.Param.LARGEUR], donnees.parametres[enums.Param.HAUTEUR]), (255,255,255))
     preview.save(donnees.parametres[enums.Param.PREVIEW])
@@ -34,6 +40,9 @@ def preparation_preview():
 ###############
 ### CHOIX 1 ###
 ###############
+#prend les pixels adjacents pour les envoyer dans une autre methode
+#prend le resultat et met gris noir ou blanc comme point du preview
+#remplie l'image preview
 def contour_image():
     img = donnees.image_final
     preview = preparation_preview()
@@ -50,10 +59,12 @@ def contour_image():
                 
                 pixels[j,i] = verification_contour(liste_pixels)
             except : 
-                print ("", end = '')
+                pass
     preview.save(donnees.parametres[enums.Param.PREVIEW])
 
-
+#param liste_pixels : tableau de pixels duquel sont pris les valeurs rgb
+#compare les variations entre les couleurs de pixels adjascents
+#return: retourne la couleur attribuee au pixel principal choisi
 def verification_contour (liste_pixels):
     r,g,b = liste_pixels[0]
     noir = donnees.parametres[enums.Param.DIFFERENCE]
@@ -69,6 +80,8 @@ def verification_contour (liste_pixels):
 ###############
 ### CHOIX 2 ###
 ###############
+#transforme une valeur rgb pour donner le hue (de 0 a 360)
+#return: valeur de hue
 def testHue (r,g,b):
     M = max(r,g,b)
     m = min(r,g,b)
@@ -83,6 +96,9 @@ def testHue (r,g,b):
         temp = (r-g)/c + 4
     return 60*temp
 
+#param array : tableau de valeurs de hue
+#compare les variations de hue aux pixels adjascents
+#return: valeur rgb a mettre pour le pixel choisi
 def hue_evaluate (array):
     noir = donnees.parametres[enums.Param.COMPARE]
     gris = math.floor(noir * 0.8)
@@ -93,6 +109,9 @@ def hue_evaluate (array):
             return (60,60,60)
     return (255,255,255)
 
+#prend une image et rempli le preview selon les valeurs de hue des pixels
+#rempli un tableau avec les valeurs de hue pour comparaison
+#rempli une image preview de gris noir ou blanc
 def color_change ():
     img = donnees.image_final
     preview = preparation_preview()
@@ -121,6 +140,9 @@ def color_change ():
 ###############
 ### CHOIX 3 ###
 ###############
+#prend une image et la converti au mode luminosite
+#se sert de la valeur de luminosite selon un seuil
+#cree un preview avec les valeurs de gris de noir et de blanc
 def gestion_auto():
     img = donnees.image_final.convert('L')
     noir = donnees.parametres[enums.Param.THRESHOLD]
@@ -141,6 +163,8 @@ def gestion_auto():
 #########################
 ### OUVERTURE FICHIER ###
 #########################
+#param path : chemin du fichier
+#charge les elements dans le dictionnaire parametres situe dans donnees
 def load_fichier(path):
     fichier = open(path, "r")
     contenu = fichier.read()
@@ -155,6 +179,8 @@ def load_fichier(path):
 ###########################
 ### ENREGISTRER FICHIER ###
 ###########################
+#param name : nom de la sauvegarde
+#sauve dans un fichier du nom du choisi les valeurs de parametres situe dans donnees
 def save_fichier(name):
     path = os.path.dirname(os.path.abspath(__file__)) + "/sauvegardes/" + name + ".save"
     fichier = open(path, "w")
@@ -165,6 +191,8 @@ def save_fichier(name):
 #############
 ### TEMPS ###
 #############
+#passe par chaque point de l'image et estime le temps selon la couleur du point
+#return: temps d'impression prevu en secondes
 def time_estimation ():
     time_in_seconds = 0.0
     nbr_gris = 0
@@ -189,6 +217,9 @@ def time_estimation ():
 ##############
 ### TAILLE ###
 ##############
+#param img_original : image initiale
+#param facteur : facteur de grossissement de l'image en float
+#return: image de dimension modifiee par le facteur de grossissement
 def resizing (img_original, facteur):
     return  img_original.resize((int(img_original.width*facteur),int(img_original.height*facteur)))
 
