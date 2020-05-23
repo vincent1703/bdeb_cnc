@@ -3,20 +3,20 @@ import donnees
 import cnc_v1
 import enums
 import tkinter as tk
+from PIL import Image
 from tkinter import Label, Scale
 import os
 
 #va chercher un fichier dans le folder images
 #type acceptes: png, jpeg, jpg, gif
 def chercher_fichier():
-    donnees.parametres[enums.Param.PATH] = app.select_file(folder=(os.path.dirname(os.path.abspath(__file__)) + "/images/"), filetypes=[["Images png", "*.png"], ["Images jpeg", "*.jpeg"],["Images jpg", "*.jpg"], ["Images gif", "*.gif"]])
+    donnees.parametres[enums.Param.PATH] = app.select_file(folder=(os.path.dirname(os.path.abspath(__file__)) + "/images/"), filetypes=[["Images jpeg", "*.jpeg"],["Images jpg", "*.jpg"]])
     chemin_image.value = donnees.parametres[enums.Param.PATH]
 
 
 def ouvrir_save():
     path = app.select_file(folder = os.path.dirname(os.path.abspath(__file__)) + "/sauvegardes/")
     cnc_v1.load_fichier(path)
-    donnees.update_premiere_page()
 
 def save_file():
     nom = app.question("Sauvegarde", "Entrez le nom de la sauvegarde", initial_value = "save")
@@ -27,8 +27,9 @@ def save_file():
 
 #affichage miniature de l'image choisie
 def confirmer_chemin():
+    img = Image.open(donnees.parametres[enums.Param.PATH]) 
     global apercu
-    apercu = Picture(premiere, image=donnees.image_path, grid=[3,0], width=150, height=150)
+    apercu = Picture(premiere, image= img, grid=[3,0], width=100, height=100)
     print ("apercu image " + donnees.parametres[enums.Param.PATH])
     return 0
 
@@ -94,21 +95,31 @@ def confirmer_mode_impression():
     elif (bouton_mode.value == "Auto(contraste)"):
         valeur = enums.Mode.AUTO
     else:
-        return 1
         info_invalide("mode invalide")
+        return 1
     donnees.parametres[enums.Param.MODE] = valeur
     return 0
 
 def affichage_preview():
     confirmer_mode_impression()
+    print(type(donnees.parametres[enums.Param.MODE]))
+    donnees.update_premiere_page()
     donnees.image_loading_array()
     estimation_temps()
+    img = donnees.parametres[enums.Param.PREVIEW]
+    print(img)
+    vider()
+    large = int(donnees.parametres[enums.Param.LARGEUR] * donnees.parametres[enums.Param.ESPACEMENT])
+    haut = int(donnees.parametres[enums.Param.HAUTEUR] * donnees.parametres[enums.Param.ESPACEMENT])
+    global preview
+    preview = Picture(deuxieme, image=img, grid=[1,1], width = large, height = haut)
+
+
+def vider():
     try:
-        preview.enabled = False
+        preview.destroy()
     except:
         pass
-    preview = Picture(deuxieme, image=donnees.preview_path, grid=[1,1])
-
 
 def fermer():
     quitter = app.yesno("Quitter", "Voulez-vous quitter l'application?")
@@ -130,6 +141,9 @@ def info_invalide(message):
     
 def deuxieme_page():
     deuxieme.show(wait = True)
+
+def retour():
+    deuxieme.hide()
 
 def fenetre_depart():
     global app
@@ -179,7 +193,7 @@ premiere.when_closed = fermer
 #############################
 ### boutons premiere page ###
 #############################
-chemin_image = TextBox(premiere, "images/mendel.png", grid=[1,0], width = 40)
+chemin_image = TextBox(premiere, "images/burger.jpeg", grid=[1,0], width = 40)
     
 bouton_selection = PushButton(premiere, command = chercher_fichier, text = "Sélectionner l'image", grid=[0,0])
 bouton_confirmer = PushButton(premiere, command = confirmer_chemin, text = "Ok", grid=[2,0])
@@ -197,9 +211,6 @@ espacement_tag = Text(premiere, "Espacement (qualité d'impression)", grid = [0,
 selection_espacement = Combo(premiere, options=["0,4 mm", "0,8 mm", "1 mm", '2 mm', '3 mm', '5 mm'], selected='1 mm', command = confirmer_espacement,  grid=[1,4], align='left')
 
 bouton_confirmer_premiere_page = PushButton(premiere, text = "Confirmer les informations", command = confirmation_premiere_page, grid = [0,5])
-
-bouton_ouvrir_sauvegarde = PushButton(premiere, text = "Ouvrir une sauvegarde", command = ouvrir_save, grid = [0,6])
-
 
 deuxieme = Window(premiere, layout="grid", title = "Lancement de l'impression", width = 900, height = 500)
 deuxieme.hide()
@@ -220,7 +231,13 @@ bouton_info = PushButton(deuxieme, text="informations", command=informations, gr
 
 bouton_sauvegarder = PushButton(deuxieme, text = "sauvegarder", command = save_file, grid = [0,3])
 
-bouton_imprimer = PushButton(deuxieme, text = "imprimer", command = imprimer, grid= [0,5])
+bouton_ouvrir_sauvegarde = PushButton(deuxieme, text = "Ouvrir une sauvegarde", command = ouvrir_save, grid = [0,5])
+
+bouton_imprimer = PushButton(deuxieme, text = "imprimer", command = imprimer, grid= [1,3])
+
+bouton_retour = PushButton(deuxieme, text = "retour", command = retour, grid = [2,2])
+
+bouton_fermer = PushButton(deuxieme, text = "fermer", command = fermer, grid = [2,3])
 
 ########################
 ### page ajustements ###

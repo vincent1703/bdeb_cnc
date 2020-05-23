@@ -172,7 +172,16 @@ def load_fichier(path):
     print("nom du fichier: " + os.path.basename(path))
     i=0
     for element in separation:
-        donnees.parametres[enums.Param(i)] = element
+        print(element)
+        try:
+            donnees.parametres[enums.Param(i)] = float(element)
+        except:
+            donnees.parametres[enums.Param(i)] = element
+        try:
+            donnees.parametres[enums.Param(i)] = int(element)
+        except:
+            pass
+        print(type(donnees.parametres[enums.Param(i)]))
         i+=1
     fichier.close()
 

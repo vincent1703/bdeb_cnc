@@ -24,7 +24,7 @@ DELAIS_SOLENOIDE = 0.5                  # Delais en secondes pour lequel le sole
 
 #dictionnaire contenant les informations de l'impression
 parametres = {}
-parametres[enums.Param.PATH] = os.path.dirname(os.path.abspath(__file__)) + "/images/mendel.png"
+parametres[enums.Param.PATH] = os.path.dirname(os.path.abspath(__file__)) + "/images/burger.jpeg"
 parametres[enums.Param.LARGEUR] = 100
 parametres[enums.Param.HAUTEUR] = 100
 parametres[enums.Param.ESPACEMENT] = 1
@@ -33,7 +33,7 @@ parametres[enums.Param.THRESHOLD] = 60
 parametres[enums.Param.DIFFERENCE] = 20
 parametres[enums.Param.COMPARE] = 20
 parametres[enums.Param.ESTIMATION] = "aucune estimation"
-parametres[enums.Param.PREVIEW] = os.path.dirname(os.path.abspath(__file__)) + "/images/preview.png"
+parametres[enums.Param.PREVIEW] = os.path.dirname(os.path.abspath(__file__)) + "/images/preview.jpg"
 
 #prend l'estiamtion en secondes dans cnc_v1 et le converti en heure et minutes
 def generate_estimation():
@@ -47,6 +47,7 @@ def generate_estimation():
 #appele la methode de traitement d'image selon le mode choisi
 #si le nom de choix est invalide il le corrige (pour les sauvegardes)
 def image_loading_array ():
+    print(parametres[enums.Param.MODE])
     if parametres[enums.Param.MODE] == enums.Mode.CONTRASTE:
         cnc_v1.mapping_image()
     elif parametres[enums.Param.MODE] == enums.Mode.LUMINOSITE:
