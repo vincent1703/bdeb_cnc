@@ -1,4 +1,6 @@
 from enum import Enum
+
+#enumaration des parameters
 class Param (Enum):
     PATH = 0
     LARGEUR = 1
@@ -11,6 +13,7 @@ class Param (Enum):
     ESTIMATION = 8
     PREVIEW = 9
 
+#enumeration des modes d'impression
 class Mode (Enum):
     CONTRASTE = 0
     LUMINOSITE = 1

@@ -8,16 +8,18 @@ from tkinter import Label, Scale
 import os
 
 #va chercher un fichier dans le folder images
-#type acceptes: png, jpeg, jpg, gif
+#type acceptes: jpeg et jpg
+#sauvegarde le chemin complet de l'image
 def chercher_fichier():
     donnees.parametres[enums.Param.PATH] = app.select_file(folder=(os.path.dirname(os.path.abspath(__file__)) + "/images/"), filetypes=[["Images jpeg", "*.jpeg"],["Images jpg", "*.jpg"]])
     chemin_image.value = donnees.parametres[enums.Param.PATH]
 
-
+#selection d'une sauvaegarde et envoie du chemin complet
 def ouvrir_save():
     path = app.select_file(folder = os.path.dirname(os.path.abspath(__file__)) + "/sauvegardes/")
     cnc_v1.load_fichier(path)
 
+#selction du nom de la sauvegarde et envoie le nom choisi
 def save_file():
     nom = app.question("Sauvegarde", "Entrez le nom de la sauvegarde", initial_value = "save")
     try:
@@ -26,13 +28,15 @@ def save_file():
         info_invalide("Sauvagarde impossible\nChoisir un nom valide")
 
 #affichage miniature de l'image choisie
+#return 0 indication aucun probleme
 def confirmer_chemin():
     img = Image.open(donnees.parametres[enums.Param.PATH]) 
     global apercu
     apercu = Picture(premiere, image= img, grid=[3,0], width=100, height=100)
-    print ("apercu image " + donnees.parametres[enums.Param.PATH])
     return 0
 
+#prend la valeur entree et la verifie avant de la sauvegarder
+#return ok :        0 si execution reussi sinon 1
 def confirmer_hauteur():
     ok = 1
     try:
@@ -50,6 +54,8 @@ def confirmer_hauteur():
         info_invalide("hauteur invalide")
     return ok
 
+#prend la valeur entree et la verifie avant de la sauvegarder
+#return ok :        0 si execution reussie sinon 1
 def confirmer_largeur():
     ok = 1
     try:
@@ -67,6 +73,8 @@ def confirmer_largeur():
         info_invalide("largeur invalide")
     return ok
 
+#prend la valeur choisie parmis la liste et la sauvegarde
+#return 0 pour confirmer que bien complete
 def confirmer_espacement():
     valeur = 1.0
     if (selection_espacement.value == '1 mm'):
@@ -84,6 +92,8 @@ def confirmer_espacement():
     donnees.parametres[enums.Param.ESPACEMENT] = valeur
     return 0
 
+#prend la valeur choisie parmis la liste et la sauvegarde
+#return 0 si execution reussie sinon return 1
 def confirmer_mode_impression():
     valeur = enums.Mode.CONTRASTE
     if (bouton_mode.value == "Contraste"):
@@ -100,6 +110,8 @@ def confirmer_mode_impression():
     donnees.parametres[enums.Param.MODE] = valeur
     return 0
 
+#confirme et actualise les informations
+#affiche l'image preview de l'impression
 def affichage_preview():
     confirmer_mode_impression()
     print(type(donnees.parametres[enums.Param.MODE]))
@@ -114,18 +126,21 @@ def affichage_preview():
     global preview
     preview = Picture(deuxieme, image=img, grid=[1,1], width = large, height = haut)
 
-
+#enleve le preview precedent si existant
 def vider():
     try:
         preview.destroy()
     except:
         pass
 
+#validation pour quitter l'application
 def fermer():
     quitter = app.yesno("Quitter", "Voulez-vous quitter l'application?")
     if quitter == True:
         app.destroy()
 
+#confirme les elements de la premiere page
+#si tout est valide ouvre la seconde page
 def confirmation_premiere_page():
     ok = 0
     ok = ok + confirmer_largeur()
@@ -136,38 +151,52 @@ def confirmation_premiere_page():
         donnees.update_premiere_page()
         deuxieme_page()
 
+#param message :        nom de l'information invalide
+#affiche un probleme a l'utilisateur
 def info_invalide(message):
     app.error("information invalide ", message)
     
+#affiche la seconde page
 def deuxieme_page():
     deuxieme.show(wait = True)
 
+#cache la seconde page
 def retour():
     deuxieme.hide()
 
+#fenetre d'accueil avec informations de base
 def fenetre_depart():
     global app
     app = App(title='CNC_BdeB', layout="grid", width = 1280, height = 720, visible=False)
     app.info("Bienvenue", "Pour commencer :\n 1) Sélectionnez l'image source\n 2) Sélectionnez les dimensions de la surface d'impression")
 
+#affiche la page d'ajustement
 def page_ajustement():
     ajustement.show(wait=True)
 
+#param contraste_value :    valeur du slider de contraste
+#ecrit la valeur du slider de contraste dans la boite a cote
 def changement_contraste(contraste_value):
     text_contraste.value = contraste_value
 
+#param luminosite_value :   valeur du slider de luminosite
+#ecrit la valeur du slider de luminosite dans la boite a cote
 def changement_luminosite(luminosite_value):
     text_luminosite.value = luminosite_value
 
+#param couleur_value :      valeur du slider de couleur
+#ecrit la valeur du slider de couleur dans la boite a cote
 def changement_couleur(couleur_value):
     text_couleur.value = couleur_value
 
+#enregistre les valeurs des sliders d'ajustement
 def ajuster():
     donnees.parametres[enums.Param.THRESHOLD] = int(text_contraste.value)
     donnees.parametres[enums.Param.DIFFERENCE] = int(text_luminosite.value)
     donnees.parametres[enums.Param.COMPARE] = int(text_couleur.value)
     ajustement.hide()
 
+#affiche les informations actuelles de l'impression
 def informations():
     confirmer_mode_impression()
     donnees.image_loading_array()
@@ -176,10 +205,12 @@ def informations():
         info = info + x.name + " :" + str(donnees.parametres[x])+ "\n" 
     app.info("informations", info)
 
+#affiche l'estimation de temps de l'impression
 def estimation_temps():
     donnees.generate_estimation()
     text_estimation.value = "estimation:\n" + str(donnees.parametres[enums.Param.ESTIMATION])
 
+#pars l'impression et sauvegarde les parametres actuels
 def imprimer():
     validation = app.yesno("Impression", "Voulez-vous commencer l'impression?")
     if validation:

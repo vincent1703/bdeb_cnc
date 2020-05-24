@@ -165,6 +165,7 @@ def gestion_auto():
 #########################
 #param path : chemin du fichier
 #charge les elements dans le dictionnaire parametres situe dans donnees
+#converti les informations dans le bon type
 def load_fichier(path):
     fichier = open(path, "r")
     contenu = fichier.read()
@@ -172,7 +173,6 @@ def load_fichier(path):
     print("nom du fichier: " + os.path.basename(path))
     i=0
     for element in separation:
-        print(element)
         try:
             donnees.parametres[enums.Param(i)] = float(element)
         except:
@@ -181,7 +181,6 @@ def load_fichier(path):
             donnees.parametres[enums.Param(i)] = int(element)
         except:
             pass
-        print(type(donnees.parametres[enums.Param(i)]))
         i+=1
     fichier.close()
 

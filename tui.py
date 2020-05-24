@@ -7,7 +7,8 @@ import os
 from PIL import Image
 
 #menu principal
-#7 options
+#10 options
+#appelle la methode de l'option choisie
 def menu_principal():
     continuer = True
     while(continuer):
@@ -60,6 +61,8 @@ def menu_principal():
             print('Ce choix est invalide veuillez recommencer\n')
 
 #selection image_path
+#propose les differents choix
+#prend le nom de l'image et enregistre le path complet
 def image_path():
     print("Selection de l'image\n")
     valide = False
@@ -79,6 +82,8 @@ def image_path():
             valide = not validation_bool("Image invalide. Voulez-vous recommencer?[Oui/non]")
 
 #ouverture de sauvegarde
+#propose les differentes sauvegardes
+#envoie le choix pour prendre les infos
 def ouvrir_fichier():
     print("Ouverture d'un fichier de sauvegarde\n")
     valide = False
@@ -97,6 +102,8 @@ def ouvrir_fichier():
 
 
 #sauvegarde d'un fichier
+#demande le nom choisi pour la sauvegarde
+#envoie le nom choisi
 def save_fichier():
     valide = False
     print("Sauvegarde des parametres actuels\n")
@@ -115,6 +122,7 @@ def espacement():
     donnees.parametres[enums.Param.ESPACEMENT] = validation("espacement(mm)", 0.2, 5.0, 0.2)
 
 #selection mode d'impression
+#offre les modes et fait la selection
 def mode_impression():
     print("Selection du mode d'impression\n")
     texte = str("choix #0 : contrastes\nchoix #1 : contours(luminosite)\nchoix #2 : contours(couleur)\nchoix #3 : Automatique(contrastes)\nmode")
@@ -122,6 +130,7 @@ def mode_impression():
     parametre()
 
 #selection du parametre selon mode
+#redirige vers le bon parametre
 def parametre():
     print("Ajustement du parametre d'impression\n")
     if donnees.parametres[enums.Param.MODE] == enums.Mode.CONTRASTE:
@@ -136,6 +145,7 @@ def parametre():
         print("Probleme de selection du mode")
 
 #explications pour l'ajustement des parametres
+#prendre le choix et enregistrer la valeur
 def param_0():
     print("Dans le mode contraste, le parametre determine la valeur RGB (0-255) necessaire a une des trois couleurs pour la considerer comme foncee.\nPlus cette valeur est grande, moins il y aura de points a imprimer\nLa valeur doit se situer entre 20 et 200\n")
     donnees.parametres[enums.Param.THRESHOLD] = validation("parametre", 20, 200, 1)
@@ -146,12 +156,14 @@ def param_2():
     print("Dans le mode contour de couleur, le parametre determine la difference de valeur hue(0-360) necessaire entre 2 pixels voisins pour considerer un changement de couleur.\nPlus cette valeur est grande par rapport au nombre de pixels, moins il y aura de points a imprimer.\nLa valeur doit se trouver entre 2 et 100\n")
     donnees.parametres[enums.Param.COMPARE] = validation("parametre", 2, 100, 1)
 
+#update les informations entrees par l'utilisateur
 def actualiser_infos():
     donnees.update_premiere_page()
     donnees.image_loading_array()
     donnees.generate_estimation()
 
 #generer preview
+#afficher le temps prevu
 def generer_preview():
     actualiser_infos()
     print("Une nouvelle image preview a ete generee\n")
@@ -164,6 +176,7 @@ def affichage_actuel():
         print(x.name + ": " + str(donnees.parametres[x]))
 
 #debuter l'impression avec verification
+#sauvegarde les parametres actuels
 def impression():
     affichage_actuel()
     if validation_bool("Souhaitez-vous imprimer cette image[Oui/non]?"):
@@ -185,6 +198,11 @@ def accueil():
 ##################
 ### VALIDATION ###
 ##################
+#param  param_string :  nom du parametre que l'utilateur selectionne
+#param  minimum :       valeur minimale acceptee
+#param  maximum :       valeur maximale acceptee
+#param  modulo :        valeur par laquelle le choix doit etre divisible
+#return valeur:         valeur valide choisie par l'utilisateur
 def validation(param_string, minimum,  maximum, modulo):
     valide = False
     while(not valide):
@@ -205,6 +223,8 @@ def validation(param_string, minimum,  maximum, modulo):
     return valeur
 
 
+#param texte :      indication de ce que l'utilisateur doit entrer
+#return entry :     ce que l'utilisateur a confirme comme son choix
 def validation_texte(texte):
     valide = False
     while(not valide):
@@ -213,6 +233,8 @@ def validation_texte(texte):
     return entry
 
 
+#param texte :      indication de ce que l'utilisateur doit entrer
+#return :           retourne True or False selon le choix de l'utilisateur(default True)
 def validation_bool(texte):
     entry = input(texte)
     if "non" in entry.lower():
@@ -223,5 +245,3 @@ def validation_bool(texte):
 #fin des methodes
 ######################
 accueil()
-#fin du programme
-######################
