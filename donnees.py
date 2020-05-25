@@ -34,6 +34,7 @@ parametres[enums.Param.DIFFERENCE] = 20
 parametres[enums.Param.COMPARE] = 20
 parametres[enums.Param.ESTIMATION] = "aucune estimation"
 parametres[enums.Param.PREVIEW] = os.path.dirname(os.path.abspath(__file__)) + "/images/preview.jpg"
+parametres[enums.Param.VITESSE] = enums.Vitesse.MOYEN
 
 #prend l'estiamtion en secondes dans cnc_v1 et le converti en heure et minutes
 def generate_estimation():

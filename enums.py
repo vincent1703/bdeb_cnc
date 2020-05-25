@@ -12,6 +12,7 @@ class Param (Enum):
     COMPARE = 7
     ESTIMATION = 8
     PREVIEW = 9
+    VITESSE = 10
 
 #enumeration des modes d'impression
 class Mode (Enum):
@@ -19,3 +20,8 @@ class Mode (Enum):
     LUMINOSITE = 1
     COULEUR = 2
     AUTO = 3
+
+class Vitesse (Enum):
+    LENT = 0
+    MOYEN = 1
+    RAPIDE = 2

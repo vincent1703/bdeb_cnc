@@ -181,7 +181,8 @@ def impression():
     affichage_actuel()
     if validation_bool("Souhaitez-vous imprimer cette image[Oui/non]?"):
         cnc_v1.save_fichier("last_print")
-        controle_machine.impression()
+        print("debut de l'impression")
+        #controle_machine.impression()
 
 #verification pour quitter
 def quitter():

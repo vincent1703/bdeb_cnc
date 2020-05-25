@@ -190,11 +190,31 @@ def changement_luminosite(luminosite_value):
 def changement_couleur(couleur_value):
     text_couleur.value = couleur_value
 
+#active le mode de controle manuel
+def activer_mode_manuel():
+    controle_machine.controle_manuel_start()
+
+#arrete le mode de controle manuel
+def arreter_mode_manuel():
+    controle_machine.controle_manuel_stop()
+
+#prend la valeur de vitesse des radio button
+#return valeur :    valeur de vitesse
+def choix_vitesse():
+    if bouton_vitesse.value == "Lent":
+        valeur = enums.Vitesse.LENT
+    elif bouton_vitesse.value == "Moyen":
+        valeur = enums.Vitesse.MOYEN
+    else:
+        valeur = enums.Vitesse.RAPIDE
+    return valeur
+
 #enregistre les valeurs des sliders d'ajustement
 def ajuster():
     donnees.parametres[enums.Param.THRESHOLD] = int(text_contraste.value)
     donnees.parametres[enums.Param.DIFFERENCE] = int(text_luminosite.value)
     donnees.parametres[enums.Param.COMPARE] = int(text_couleur.value)
+    donnees.parametres[enums.Param.VITESSE] = choix_vitesse()
     ajustement.hide()
 
 #affiche les informations actuelles de l'impression
@@ -247,6 +267,10 @@ bouton_confirmer_premiere_page = PushButton(premiere, text = "Confirmer les info
 deuxieme = Window(premiere, layout="grid", title = "Lancement de l'impression", width = 900, height = 500)
 deuxieme.hide()
 
+bouton_manuel_on = PushButton(premiere, text = "mode manuel", command = activer_mode_manuel, grid = [1,5])
+
+bouton_manuel_off = PushButton(premiere, text = "arret manuel", command = arreter_mode_manuel, grid = [1,6])
+
 #############################
 ### boutons deuxieme page ###
 #############################
@@ -290,6 +314,7 @@ titre_couleur = Text(ajustement, "couleur", grid=[0,2], align="bottom")
 couleur = Slider(ajustement,command=changement_couleur,end=80 ,grid=[1,2],start=2 ,enabled=True,width=400,height=20)
 text_couleur = Text(ajustement,contraste.value, grid=[2,2],align="bottom")
 
+bouton_vitesse = ButtonGroup(ajustement, grid=[1,3], options = ['Lent', 'Moyen', 'Rapide'], selected = 'Moyen', horizontal = True)
 
 #debut du programme
 app.display()
