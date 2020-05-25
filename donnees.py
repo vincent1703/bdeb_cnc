@@ -9,6 +9,7 @@ largeur_surface = 400                   #largeur choisie par l'utilisateur en mm
 hauteur_surface = 400                   #hauteur choisie par l'utilisateur en mm
 
 espacement=0.4                          #espacement entre chaque points en mm
+stop_manuel = False
 
 HAUTEUR_MAX = 500                       #hauteur maximale d'impression en mm
 LARGEUR_MAX = 500                       #largeur maximale d'impression en mm 
@@ -17,9 +18,11 @@ PREVIEW_PATH = os.path.dirname(os.path.abspath(__file__)) + "/images/dauphin.jpe
 
 nb_step_x = 0                           # Compteur du nb de steps fait de droite a gauche
 nb_step_y = 0                           # Compteur du nb de steps fait de haut en bas
-DELAIS_STEP = 0.002                     # Delais en secondes entre chaque changement de step 
-DELAIS_SOLENOIDE = 0.5                  # Delais en secondes pour lequel le solenoide est active
-#DELAIS_GRIS = ?
+DELAIS_STEP = 0.0007                     # Delais en secondes entre chaque changement de step 
+DELAIS_LENT = 0.5
+DELAIS_MOYEN = 0.1
+DELAIS_VITE = 0.05
+
 
 
 #dictionnaire contenant les informations de l'impression

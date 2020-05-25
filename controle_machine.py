@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 import donnees
+import enums
 from time import sleep
 import time
 import threading
@@ -29,7 +30,7 @@ def impression():
     for i in range(img.height):
         for j in range(img.width):
             l_img = img.convert('L')
-            l = l_im.getpixel((j, i))
+            l = l_img.getpixel((j, i))
             
             if l<200:
                 point()
@@ -51,7 +52,7 @@ def controle_manuel_start():
 
    
 
-def controle_manuel_start():
+def controle_manuel_stop():
 
     donnees.stop_manuel = True
 
@@ -217,7 +218,16 @@ STEP_DISTANCE = 0.2     # Valeur en mm qui détermine la distance que doit parco
 DELAIS_STEP_Y = 0.002     # Delais entre chaque step, en secondes, determine la vitesse
 DELAIS_STEP_X = 0.0007    # Delais entre chaque step, en secondes, determine la vitesse
 SPR = 200               # Nombre de Step Par Rotation
-DELAIS_SOLENOIDE = donnees.DElAIS_SOLENOIDE  # Delais que doit passer le relais du solenoide en position activee pour que l'impression se fasse. ***MODIFIER DONNEES DIFFERENT MODES ?
+global DELAIS_SOLENOIDE 
+DELAIS_SOLENOIDE = 0.05
+
+if donnees.parametres[enums.Param.VITESSE] == enums.Vitesse.LENT:
+    DELAIS_SOLENOIDE = donnees.DELAIS_LENT
+elif donnees.parametres[enums.Param.VITESSE] == enums.Vitesse.MOYEN:
+    DELAIS_SOLENOIDE = donnees.DELAIS_MOYEN
+else:
+    DELAIS_SOLENOIDE = donnees.DELAIS_VITE
+
 
 #######################
 # Variables de classe #
