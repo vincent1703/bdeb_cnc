@@ -5,7 +5,7 @@ import time
 import threading
 from PIL import Image
 
-
+# Méthode de test pour imprimer virtuellement dans le terminal (limitée)
 def impression_fake():
     global array
     array = donnes.image_booleen
@@ -21,11 +21,11 @@ def impression_fake():
         print("")
 
 
+# Méthode déclenchant l'impression à partir du fichier image créé sur mesure avec l'interface
 def impression():
     
     img = Image.open(donnees.parametres[enums.Param.PREVIEW])
     
-   
     for i in range(img.height):
         for j in range(img.width):
             l_img = img.convert('L')
@@ -35,13 +35,27 @@ def impression():
                 point()
             prochain_point()
         prochaine_ligne()
+    reset_buse
+    GPIO.cleanup
+   
+def controle_manuel_start():
+ 
+    t1 = threading.Thread(target=man_1)
+    t2 = threading.Thread(target=man_2)
 
-            
-                    
-# Fait en sorte que le solenoide s'actionne pour l'impression
-def impression_point():
-    print('point imprime')
+    t1.start()
+    t2.start()
 
+    t1.join()
+    t2.join()
+
+   
+
+def controle_manuel_start():
+
+    donnees.stop_manuel = True
+
+# Méthodes pour le contrôle manuel du déplacement de la buse sur les axes X et Y
 def droite():
     GPIO.output(DIR_X, SAH)
     GPIO.output(STEP_X, 1)
@@ -118,12 +132,12 @@ def prochaine_ligne():
     print(donnees.nb_step_x)
     print(donnees.nb_step_y)
     GPIO.output(EN_Y, 1)
-# Remet la buse dans le coin en haut à gauche
 
+# Actionne le solénoide pour que la buse soit en contact avec la surface d'impression
 def point_on():
     GPIO.output(TRS, 1)
 
-# 
+# Désactive le solénoide pour que la buse ne soit pas en contact avec la surface d'impression
 def point_off():
     GPIO.output(TRS, 0)
 
@@ -139,23 +153,25 @@ def point():
 def man_1():
     GPIO.output(EN_Y, 0)
     while(True):
-        if GPIO.input(MAN_DROITE) == 1:
-            droite()
-        if GPIO.input(MAN_GAUCHE) == 1:
-            gauche()
-        if GPIO.input(MAN_HAUT) == 1:
-            haut()
-        if GPIO.input(MAN_BAS) == 1:
-            bas()
+        if donnees.stop_manuel == False:
+            if GPIO.input(MAN_DROITE) == 1:
+                droite()
+            if GPIO.input(MAN_GAUCHE) == 1:
+                gauche()
+            if GPIO.input(MAN_HAUT) == 1:
+                haut()
+            if GPIO.input(MAN_BAS) == 1:
+                bas()
 
 # Méthode du thread 2 pour le contrôle manuel du solénoide
 def man_2():
     while(True):
         sleep(0.01)
-        if GPIO.input(MAN_POINT) == 1:
-            point_on()
-        else:
-            point_off()
+        if donnees.stop_manuel == False:
+            if GPIO.input(MAN_POINT) == 1:
+                point_on()
+            else:
+                point_off()
 
 
 
