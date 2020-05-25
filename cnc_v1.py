@@ -205,21 +205,33 @@ def time_estimation ():
     time_in_seconds = 0.0
     nbr_gris = 0
     nbr_noir = 0
+    delais = choix_delais()
     image = Image.open(donnees.parametres[enums.Param.PREVIEW])
     for i in range (donnees.parametres[enums.Param.HAUTEUR]):
         for j in range (donnees.parametres[enums.Param.LARGEUR]):
             if image.getpixel((j,i)) == (60,60,60):
                 nbr_gris += 1
-                time_in_seconds += math.floor(donnees.DELAIS_SOLENOIDE * 0.5)
+                time_in_seconds += delais
             elif image.getpixel((j,i)) == (0,0,0):
                 nbr_noir += 1
-                time_in_seconds += donnees.DELAIS_SOLENOIDE
+                time_in_seconds += delais
             else :
-                time_in_seconds += donnees.DELAIS_STEP
+                pass
+            time_in_seconds += int(donnees.DELAID_STEP*donnees.parametres[enums.Param.ESPACEMENT]/0.2)
     print ("nbr points gris: " + str(nbr_gris))
     print ("nbr points noirs: " + str(nbr_noir))
     print("nbr points total: "+ str(donnees.parametres[enums.Param.LARGEUR] * donnees.parametres[enums.Param.HAUTEUR]))
     return time_in_seconds
+
+def choix_delais():
+    DELAIS_SOLENOIDE = 0.05
+    if donnees.parametres[enums.Param.VITESSE] == enums.Vitesse.LENT:
+        DELAIS_SOLENOIDE = donnees.DELAIS_LENT
+    elif donnees.parametres[enums.Param.VITESSE] == enums.Vitesse.MOYEN:
+        DELAIS_SOLENOIDE = donnees.DELAIS_MOYEN
+    else:
+        DELAIS_SOLENOIDE = donnees.DELAIS_VITE
+    return DELAIS_SOLENOIDE
 
 
 ##############
