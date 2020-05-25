@@ -23,15 +23,15 @@ def impression_fake():
 
 def impression():
     
-    img = Image.open(donnees.PREVIEW_PATH)
+    img = Image.open(donnees.parametres[enums.Param.PREVIEW])
     
    
     for i in range(img.height):
         for j in range(img.width):
-            rgb_img = img.convert('RGB')
-            r, g, b = rgb_img.getpixel((j, i))
+            l_img = img.convert('L')
+            l = l_im.getpixel((j, i))
             
-            if r<200:
+            if l<200:
                 point()
             prochain_point()
         prochaine_ligne()
@@ -123,15 +123,19 @@ def prochaine_ligne():
 def point_on():
     GPIO.output(TRS, 1)
 
+# 
 def point_off():
     GPIO.output(TRS, 0)
 
+# Imprime un point selon le délais défini pour l'activation du solénoide 
 def point():
     GPIO.output(TRS, 1)
     sleep(DELAIS_SOLENOIDE/2)
     GPIO.output(TRS, 0)
     sleep(DELAIS_SOLENOIDE/2)
 
+
+# Méthode du thread 1 pour le contrôle manuel des directions
 def man_1():
     GPIO.output(EN_Y, 0)
     while(True):
@@ -144,6 +148,7 @@ def man_1():
         if GPIO.input(MAN_BAS) == 1:
             bas()
 
+# Méthode du thread 2 pour le contrôle manuel du solénoide
 def man_2():
     while(True):
         sleep(0.01)
@@ -152,10 +157,9 @@ def man_2():
         else:
             point_off()
 
-    
 
 
-
+# Méthode remettant la buse à sa position initiale, c'est à dire en haut à gauche (x, y = 0)
 def reset_buse():
     GPIO.output(EN_Y, 0)
     for i in range(donnees.nb_step_x):
@@ -197,7 +201,7 @@ STEP_DISTANCE = 0.2     # Valeur en mm qui détermine la distance que doit parco
 DELAIS_STEP_Y = 0.002     # Delais entre chaque step, en secondes, determine la vitesse
 DELAIS_STEP_X = 0.0007    # Delais entre chaque step, en secondes, determine la vitesse
 SPR = 200               # Nombre de Step Par Rotation
-DELAIS_SOLENOIDE = 0.05  # Delais que doit passer le relais du solenoide en position activee pour que l'impression se fasse. ***MODIFIER DONNEES DIFFERENT MODES ?
+DELAIS_SOLENOIDE = donnees.DElAIS_SOLENOIDE  # Delais que doit passer le relais du solenoide en position activee pour que l'impression se fasse. ***MODIFIER DONNEES DIFFERENT MODES ?
 
 #######################
 # Variables de classe #
@@ -279,72 +283,27 @@ GPIO.setup(MAN_POINT, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 # Code test a rouler apres initialisation #
 ###########################################
 
-#for i in range(50):
-#    for i in range(50):
-#        point()
-#        prochain_point()
-#    prochaine_ligne()
-
-try:
+#try:
     
-    GPIO.output(TRS, 0)
+#    GPIO.output(TRS, 0)
         
-    impression()
+#    impression()
 
-    reset_buse()
-
-
-#    for i in range(10):
-#        prochaine_ligne()
-#        for i in range(10):
-#            prochain_point()
-#    for i in range(10):
-#        point()
-#    for i in range(10):
-#        prochain_point()
-#        point()
-#    prochaine_ligne()
-#
-#
-#    for i in range(100):
-#        prochaine_ligne()
-#    for i in range(100):
-#        prochain_point()
-#    for i in range(100):
-#        prochaine_ligne()
 #    reset_buse()
 
 
-    t1 = threading.Thread(target=man_1)
-    t2 = threading.Thread(target=man_2)
+#    t1 = threading.Thread(target=man_1)
+#    t2 = threading.Thread(target=man_2)
 
 
-    t1.start()
-    t2.start()
+#    t1.start()
+#    t2.start()
 
-    t1.join()
-    t2.join()
+#    t1.join()
+#    t2.join()
 
-
-#    while(True):
-#        
-#        if GPIO.input(MAN_DROITE) == 1:
-#            droite()
-#
-#        if GPIO.input(MAN_GAUCHE) == 1:
-#            gauche()
-#
-#        if GPIO.input(MAN_HAUT) == 1:
-#            haut()
-#
-#        if GPIO.input(MAN_BAS) == 1:
-#            bas()
-#
-#        if GPIO.input(MAN_POINT) == 1:
-#            point()
-
-except:
-    GPIO.cleanup()
+#except:
+#    GPIO.cleanup()
 
 
 #GPIO.cleanup()

@@ -1,5 +1,6 @@
 from guizero import App, Text, TextBox, PushButton, info, Picture, ButtonGroup, Combo, Window, Picture, Slider
 import donnees
+import controle_machine 
 import cnc_v1
 import enums
 import tkinter as tk
