@@ -89,7 +89,7 @@ def bas():
 # Fait avancer la buse au point suivant (à droite) 
 def prochain_point():
    
-    for i in range(int((float(donnees.espacement) / float(STEP_DISTANCE)))):
+    for i in range(int((float(donnees.parametres[enums.Param.ESPACEMENT]) / float(STEP_DISTANCE)))):
         GPIO.output(DIR_X, SAH)
         GPIO.output(STEP_X, 1)
         sleep(DELAIS_STEP_X)
@@ -99,10 +99,10 @@ def prochain_point():
         
         donnees.nb_step_x += 1
 
-        print("buse tassee a droite d'un step")
-    print("buse tassee a droite d'un point")
-    print(donnees.nb_step_x)
-    print(donnees.nb_step_y)
+#        print("buse tassee a droite d'un step")
+#    print("buse tassee a droite d'un point")
+#    print(donnees.nb_step_x)
+#    print(donnees.nb_step_y)
 
 # Fait passer la buse à la ligne suivante (hauteur) et la remet à gauche (début de la ligne)
 def prochaine_ligne():
@@ -115,12 +115,12 @@ def prochaine_ligne():
         GPIO.output(STEP_X, 0)
         sleep(DELAIS_STEP_X)
         donnees.nb_step_x -= 1 
-        print('buse tassee a gauche dun step')
-    print('buse tassee a gauche dun point')
-    print(donnees.nb_step_x)
-    print(donnees.nb_step_y)
+#        print('buse tassee a gauche dun step')
+#    print('buse tassee a gauche dun point')
+#    print(donnees.nb_step_x)
+#    print(donnees.nb_step_y)
 
-    for i in range(int(float(donnees.espacement)/float(STEP_DISTANCE))):
+    for i in range(int(float(donnees.parametres[enums.Param.ESPACEMENT])/float(STEP_DISTANCE))):
         GPIO.output(DIR_Y, SH)
         GPIO.output(STEP_Y, 1)
         sleep(DELAIS_STEP_Y)

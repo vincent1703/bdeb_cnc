@@ -217,7 +217,7 @@ def time_estimation ():
                 time_in_seconds += delais
             else :
                 pass
-            time_in_seconds += int(donnees.DELAID_STEP*donnees.parametres[enums.Param.ESPACEMENT]/0.2)
+            time_in_seconds += float(8*donnees.DELAIS_STEP*donnees.parametres[enums.Param.ESPACEMENT]/0.2)
     print ("nbr points gris: " + str(nbr_gris))
     print ("nbr points noirs: " + str(nbr_noir))
     print("nbr points total: "+ str(donnees.parametres[enums.Param.LARGEUR] * donnees.parametres[enums.Param.HAUTEUR]))
